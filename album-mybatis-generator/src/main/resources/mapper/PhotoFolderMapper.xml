@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.sicnu.album.dao.PhotoFolderMapper">
+  <resultMap id="BaseResultMap" type="cn.sicnu.album.vo.PhotoFolder">
+    <constructor>
+      <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="title" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="user_id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="album_id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="store_path" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="desc" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="photo_list" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="photo_count" javaType="java.lang.Integer" jdbcType="INTEGER" />
+    </constructor>
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, title, user_id, album_id, create_time, store_path, `desc`, photo_list, photo_count
+  </sql>
+  <select id="selectByExample" parameterType="cn.sicnu.album.vo.PhotoFolderExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from tb_photo_folder
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_photo_folder
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from tb_photo_folder
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="cn.sicnu.album.vo.PhotoFolder">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tb_photo_folder (title, user_id, album_id, 
+      create_time, store_path, `desc`, 
+      photo_list, photo_count)
+    values (#{title,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{albumId,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{storePath,jdbcType=VARCHAR}, #{desc,jdbcType=VARCHAR}, 
+      #{photoList,jdbcType=VARCHAR}, #{photoCount,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.sicnu.album.vo.PhotoFolder">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tb_photo_folder
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="title != null">
+        title,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="albumId != null">
+        album_id,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="storePath != null">
+        store_path,
+      </if>
+      <if test="desc != null">
+        `desc`,
+      </if>
+      <if test="photoList != null">
+        photo_list,
+      </if>
+      <if test="photoCount != null">
+        photo_count,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="albumId != null">
+        #{albumId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="storePath != null">
+        #{storePath,jdbcType=VARCHAR},
+      </if>
+      <if test="desc != null">
+        #{desc,jdbcType=VARCHAR},
+      </if>
+      <if test="photoList != null">
+        #{photoList,jdbcType=VARCHAR},
+      </if>
+      <if test="photoCount != null">
+        #{photoCount,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="cn.sicnu.album.vo.PhotoFolderExample" resultType="java.lang.Long">
+    select count(*) from tb_photo_folder
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.sicnu.album.vo.PhotoFolder">
+    update tb_photo_folder
+    <set>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="albumId != null">
+        album_id = #{albumId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="storePath != null">
+        store_path = #{storePath,jdbcType=VARCHAR},
+      </if>
+      <if test="desc != null">
+        `desc` = #{desc,jdbcType=VARCHAR},
+      </if>
+      <if test="photoList != null">
+        photo_list = #{photoList,jdbcType=VARCHAR},
+      </if>
+      <if test="photoCount != null">
+        photo_count = #{photoCount,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.sicnu.album.vo.PhotoFolder">
+    update tb_photo_folder
+    set title = #{title,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=INTEGER},
+      album_id = #{albumId,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      store_path = #{storePath,jdbcType=VARCHAR},
+      `desc` = #{desc,jdbcType=VARCHAR},
+      photo_list = #{photoList,jdbcType=VARCHAR},
+      photo_count = #{photoCount,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
