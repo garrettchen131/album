@@ -2,6 +2,10 @@
     <div class="startDiv">
 
 
+        <div class="self_emptyTip" v-if="selfEmptyTip">
+            你的相册空空如也呢~😄<br>
+            赶紧创建相册开始你的照片管理之旅吧！
+        </div>
 
         <el-row>
             <div :span="4" v-for="item in search(searchKeywords)" :key="item.id" class="card">
@@ -65,66 +69,70 @@
                 albumList: [    // 这里的数据用axios向后端发请求，请求数据
                     {
                         id: 1,
-                        coverImage: 'https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg',
+                        coverImage: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png',
                         title: '美好时光',
                         introduction: '记录了我高中青春哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈',
-                        photos: [
-                            'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg',
-                            'https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg',
-                            'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg'
+                        createTime: '2019-12-18 Tue',
+                        sets: [
+                            {
+                                uploadTime: '2019-12-15 Tue',
+                                desc: '今天去了都江堰，记录一下通过设置 autosize 属性可以使得文本域的高度能够根据文本内容自动进行调整，并且 autosize 还可以设定为一个对象，指定最小行数和最大行数。通过设置 autosize 属性可以使得文本域的高度能够根据文本内容自动进行调整，并且 autosize 还可以设定为一个对象，指定最小行数和最大行数。',
+                                photos: [
+                                    'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg',
+                                    'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg',
+                                    'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg',
+                                    'https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg',
+                                    'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
+                                    'https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg',
+                                    'https://fuss10.elemecdn.com/1/34/19aa98b1fcb2781c4fba33d850549jpeg.jpeg',
+                                    'https://fuss10.elemecdn.com/0/6f/e35ff375812e6b0020b6b4e8f9583jpeg.jpeg',
+                                    'https://fuss10.elemecdn.com/9/bb/e27858e973f5d7d3904835f46abbdjpeg.jpeg',
+                                    'https://fuss10.elemecdn.com/d/e6/c4d93a3805b3ce3f323f7974e6f78jpeg.jpeg',
+                                    'https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg',
+                                    'https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg'
+                                ]
+                            },
+                            {
+                                uploadTime: '2019-12-18 Tue',
+                                desc: '追星之路长漫漫',
+                                photos: [
+                                    'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg',
+                                    'https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg'
+                                ]
+                            },
                         ]
                     },
                     {
                         id: 2,
                         coverImage: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg',
                         title: '环游世界',
-                        introduction: '珠穆朗玛峰我来啦！'
-                    },
-                    {
-                        id: 3,
-                        coverImage: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-                        title: '小鸟',
-                        introduction: '你徐家汇反对车u的成分货色间出现'
-                    },
-                    {
-                        id: 4,
-                        coverImage: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-                        title: '小鸟',
-                        introduction: '你徐家汇反对车u的成分货色间出现'
-                    },
-                    {
-                        id: 5,
-                        coverImage: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg',
-                        title: '环游世界',
-                        introduction: '珠穆朗玛峰我来啦！'
-                    },
-                    {
-                        id: 6,
-                        coverImage: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg',
-                        title: '环游世界',
-                        introduction: '珠穆朗玛峰我来啦！'
-                    },
-                    {
-                        id: 7,
-                        coverImage: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png',
-                        title: '环游世界',
-                        introduction: '珠穆朗玛峰我来啦！'
-                    },
-                    {
-                        id: 8,
-                        coverImage: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg',
-                        title: '环游世界',
-                        introduction: '珠穆朗玛峰我来啦！'
-                    },
-                    {
-                        id: 9,
-                        coverImage: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg',
-                        title: '环游世界',
-                        introduction: '珠穆朗玛峰我来啦！'
+                        introduction: '珠穆朗玛峰我来啦！',
+                        createTime: '2019-12-18 Tue',
+                        sets: [
+                            {
+                                uploadTime: '2019-12-15 Tue',
+                                desc: '追星之路长漫漫',
+                                photos: [
+                                    'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg',
+                                    'https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg',
+                                    'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg'
+                                ]
+                            },
+                            {
+                                uploadTime: '2019-12-18 Tue',
+                                desc: '今天去了都江堰，记录一下',
+                                photos: [
+                                    'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg',
+                                    'https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg',
+                                    'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg'
+                                ]
+                            },
+                        ]
                     }
                 ],
                 deleteAlbum_dialogVisible: false,
-                editAlbum_dialogTableVisible: false
+                editAlbum_dialogTableVisible: false,
+                selfEmptyTip: true
             }
         },
         methods:{
@@ -144,7 +152,7 @@
                 this.editAlbum_dialogTableVisible=true;
             },
             openAlbum(item) {
-                this.$router.push({ name: 'album', params: item })
+                this.$router.push({ name: 'set', params: item })
             },
             deleteAlbum(id) {
                 // this.deleteAlbum_dialogVisible = false
@@ -157,19 +165,27 @@
             },
             handleClose(done) {
                 done()
+            },
+            checkData() {
+                if(this.albumList.length !== 0) {
+                    this.selfEmptyTip = false
+                }
             }
         },
         components: {
             editAlbum
         },
-        props: ['searchKeywords']
+        props: ['searchKeywords', 'newAlbumInfo'],
+        mounted() {
+            this.checkData()
+        }
     }
 </script>
 
 <style lang='css' scoped>
 .startDiv {
     padding:0 0 100px 70px;
-    /* background: url(.././assets/Bg2.jpg); */
+    /* background: url(https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg); */
     height: auto;
 }
 .card {
@@ -220,6 +236,18 @@
   text-overflow: ellipsis;
   overflow: hidden;
 }
+.self_emptyTip {
+    font-size: 60px;
+    font-weight: bold;
+    color: rgba(0, 0, 0, 0.1);
+    text-shadow: 10px 12px 5px rgba(0, 0, 0, 0.05);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -540px;
+    margin-top: -80px;
+}
+
 .clearfix:before,
 .clearfix:after {
     display: table;

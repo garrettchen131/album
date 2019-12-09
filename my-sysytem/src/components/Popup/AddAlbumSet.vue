@@ -8,7 +8,7 @@
           :show-file-list="false"
           :on-success="handleAvatarSuccess"
           :before-upload="beforeAvatarUpload">
-          <img v-if="imageUrl" :src="imageUrl" class="avatar">
+          <img v-if="addAlbumSetForm.imageUrl" :src="addAlbumSetForm.imageUrl" class="avatar">
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
       </el-form-item>
@@ -19,7 +19,7 @@
         <el-input type="textarea" v-model="addAlbumSetForm.desc"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="submitAddAlbumForm('addAlbumSetForm')">立即创建</el-button>
+        <el-button type="primary" @click="submitAddAlbumForm('addAlbumSetForm',addAlbumSetForm)">立即创建</el-button>
         <el-button @click="resetAddAlbumForm('addAlbumSetForm')">重置</el-button>
       </el-form-item>
     </el-form>
@@ -30,15 +30,15 @@
 export default {
   data () {
     var checkCover = (rule, value, callback) => {
-      if (this.imageUrl==='') {
+      if (this.addAlbumSetForm.imageUrl==='') {
           return callback(new Error('请选择相册封面'));
       } else {
         callback()
       }
     };
     return {
-      imageUrl: '',
       addAlbumSetForm: {
+        imageUrl: '',
         name: '',
         desc: ''
       },
@@ -57,10 +57,13 @@ export default {
     }
   },
   methods: {
-    submitAddAlbumForm(formName) {
+    submitAddAlbumForm(formName,formInfo) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
             // alert('submit!');
+            this.$emit('func', formInfo)
+
+
             this.$message({
               message: '恭喜你，相册创建成功',
               type: 'success'
@@ -74,10 +77,10 @@ export default {
     },
     resetAddAlbumForm(formName) {
       this.$refs[formName].resetFields();
-      this.imageUrl = ''
+      this.addAlbumSetForm.imageUrl = ''
     },
     handleAvatarSuccess(res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw);
+      this.addAlbumSetForm.imageUrl = URL.createObjectURL(file.raw);
     },
     beforeAvatarUpload(file) {
       const isJPG = file.type === 'image/jpeg';

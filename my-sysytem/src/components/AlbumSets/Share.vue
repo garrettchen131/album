@@ -1,9 +1,15 @@
 <template>
     <div class="startDiv">
+
+        <div class="share_emptyTip" v-if="shareEmptyTip">
+            还没有和小伙伴共享的相册哦~😁<br>
+            去共享相册和大家分享你的美好生活吧！
+        </div>
+
         <!-- <h1>这是 自己的相册 组件</h1> -->
         <el-row>
             <div :span="4" v-for="item in search(searchKeywords)" :key="item.id" class="card">
-                <el-card :body-style="{ padding: '0px' }">
+                <el-card :body-style="{ padding: '0px' }" @click.native="openAlbum(item)">
                 <el-image :src="item.coverImage" class="image" fit="cover"></el-image>
                 <div style="padding: 14px;position:relative;">
                     <div class="text">
@@ -34,25 +40,35 @@
             return {
                 currentDate: new Date(),
                 albumList: [    // 这里的数据用axios向后端发请求，请求数据
-                    {
-                        id: 1,
-                        coverImage: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png',
-                        title: '美好时光',
-                        introduction: '记录了我高中青春哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈'
-                    },
-                    {
-                        id: 2,
-                        coverImage: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg',
-                        title: '环游世界',
-                        introduction: '珠穆朗玛峰我来啦！'
-                    },
-                    {
-                        id: 3,
-                        coverImage: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-                        title: '小鸟',
-                        introduction: '你徐家汇反对车u的成分货色间出现'
-                    }
-                ]
+                    // {
+                    //     id: 1,
+                    //     coverImage: 'https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg',
+                    //     title: '美好时光',
+                    //     introduction: '记录了我高中青春哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈',
+                    //     createTime: '2019-12-18 Tue',
+                    //     sets: [
+                    //         {
+                    //             uploadTime: '2019-12-15 Tue',
+                    //             desc: '今天去了都江堰，记录一下通过设置 autosize 属性可以使得文本域的高度能够根据文本内容自动进行调整，并且 autosize 还可以设定为一个对象，指定最小行数和最大行数。通过设置 autosize 属性可以使得文本域的高度能够根据文本内容自动进行调整，并且 autosize 还可以设定为一个对象，指定最小行数和最大行数。',
+                    //             photos: [
+                    //                 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg',
+                    //                 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg',
+                    //                 'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg',
+                    //                 'https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg'
+                    //             ]
+                    //         },
+                    //         {
+                    //             uploadTime: '2019-12-18 Tue',
+                    //             desc: '追星之路长漫漫',
+                    //             photos: [
+                    //                 'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg',
+                    //                 'https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg'
+                    //             ]
+                    //         },
+                    //     ]
+                    // }
+                ],
+                shareEmptyTip: true
             }
         },
         methods:{
@@ -63,9 +79,20 @@
                     }
                 })
                 return newalbumList
+            },
+            openAlbum(item) {
+                this.$router.push({ name: 'set', params: item })
+            },
+            checkData() {
+                if(this.albumList.length !== 0) {
+                    this.shareEmptyTip = false
+                }
             }
         },
-        props: ['searchKeywords']
+        props: ['searchKeywords'],
+        mounted() {
+            this.checkData()
+        }
     }
 </script>
 
@@ -122,6 +149,18 @@
   text-overflow: ellipsis;
   overflow: hidden;
 }
+.share_emptyTip{
+    font-size: 60px;
+    font-weight: bold;
+    color: rgba(0, 0, 0, 0.1);
+    text-shadow: 10px 12px 5px rgba(0, 0, 0, 0.05);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -540px;
+    margin-top: -80px;
+}
+
 .clearfix:before,
 .clearfix:after {
     display: table;

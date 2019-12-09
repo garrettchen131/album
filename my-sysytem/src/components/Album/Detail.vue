@@ -1,15 +1,6 @@
 <template>
     <div>
 
-        <div class="pageHeader">
-            <el-image :src="coverImage" style="width:100%;height:200px;" fit="cover"></el-image>
-            <div style="position: absolute;top:146px;left:10px;">
-                <el-button icon="el-icon-arrow-left" circle @click="goBack" style="background:rgba(255,255,255,0.6);color:black;"></el-button>
-                <el-button style="font-size:18px;background:rgba(255,255,255,0.6);color:black;">{{ albumName }}</el-button>
-            </div>
-        </div>
-
-
         <div style="padding: 10px 50px 100px 50px;" v-if="!canCheckDelete">
             <div class="demo-image__preview" v-for="photo in photoList" :key="photo" style="color:#fff;">
                 <div style="float:left;padding:10px;margin-top:20px;" >
@@ -48,10 +39,11 @@
 
 
         <div class="setting">
+            <el-button type="info" icon="el-icon-arrow-left" circle title="返回" @click="goBack"></el-button>
             <el-button type="primary" icon="el-icon-edit" circle title="批量管理" @click="editPhotos" v-if="!canCheckDelete"></el-button>
             <el-button type="primary" icon="el-icon-close" circle title="取消编辑" @click="canCheckDelete = !canCheckDelete;checkedPhotos = []" v-if="canCheckDelete"></el-button>
-            <el-button type="primary" icon="el-icon-delete" circle title="删除图片" @click="judgePhotos" v-if="canCheckDelete"></el-button>
-            <el-button type="success" icon="el-icon-position" circle title="移动到..." @click="addPhotos" v-if="canCheckDelete"></el-button>
+            <el-button type="danger" icon="el-icon-delete" circle title="删除图片" @click="judgePhotos" v-if="canCheckDelete"></el-button>
+            <!-- <el-button type="success" icon="el-icon-position" circle title="移动到..." @click="addPhotos" v-if="canCheckDelete"></el-button> -->
             <el-button type="danger" icon="el-icon-upload2" circle title="上传图片" @click="addPhotos" v-if="!canCheckDelete"></el-button>
         </div>
 

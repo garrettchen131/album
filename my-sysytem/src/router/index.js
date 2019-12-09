@@ -23,6 +23,7 @@ import self from '@/components/AlbumSets/Self';
 import share from '@/components/AlbumSets/Share';
 import main from '@/components/Main';
 import album from '@/components/Album/Detail';
+import set from '@/components/Album/Set';
 import home from '@/components/Home';
 import addAlbum from '@/components/Popup/AddAlbumSet';
 import changePass from '@/components/Popup/ChangePassword';
@@ -43,10 +44,12 @@ export default new Router({
       children: [
         {
           path: 'self',
+          name: 'self',
           component: self
         },
         {
           path: 'share',
+          name: 'share',
           component: share
         }
       ]
@@ -85,6 +88,11 @@ export default new Router({
     {
       path: '/editAlbum',
       component: editAlbum
+    },
+    {
+      path: '/set',
+      name: 'set',
+      component: set
     }
   ]
 })

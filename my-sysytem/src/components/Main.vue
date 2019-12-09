@@ -25,7 +25,7 @@
             </div>
         </div>
         <div class="albumView">
-            <router-view :searchKeywords='keywords'></router-view>
+            <router-view :searchKeywords='keywords' :newAlbumInfo="newAlbumInfo"></router-view>
         </div>
         <div class="bottomBtn">
             <el-button type="danger" icon="el-icon-plus" circle title="新建相册" @click="addAlbumSet" v-if="isSelf"></el-button>
@@ -36,7 +36,7 @@
             center :append-to-body='true' 
             :lock-scroll="false" 
             width="800px">
-            <addAlbum></addAlbum>
+            <addAlbum @func="createAlbum"></addAlbum>
         </el-dialog>
         <el-dialog 
             title="修改密码" 
@@ -61,24 +61,25 @@
                 addAlbum_dialogTableVisible: false,
                 changPass_dialogTableVisible: false,
                 userno: '1252005708@qq.com',
-                keywords: ''
+                keywords: '',
+                newAlbumInfo: {}
             }
         },
         methods:{
             toSelf() {
                 this.$router.push('/main/self')
-                this.isSelf = true
+                // this.isSelf = true
             },
             toShare() {
                 this.$router.push('/main/share')
-                this.isSelf = false
+                // this.isSelf = false
             },
             toLogin() {
                 this.$router.push('/home/login')
             },
             toAboutUs() {
-                this.$alert('前端小白陈香伶1252005708@qq.com', '关于我', {
-                    confirmButtonText: '确定'
+                this.$alert('你好，我是🥦🐔陈香伶，你太强了👍', '关于我', {
+                    confirmButtonText: '是的，陈香伶是🥦🐔'
                 });
             },
             addAlbumSet() {
@@ -86,11 +87,27 @@
             },
             toChangePass() {
                 this.changPass_dialogTableVisible=true;
+            },
+            createAlbum(formInfo) {
+                // console.log(formInfo)
+                this.newAlbumInfo = formInfo
             }
         },
         components: {
             addAlbum,
             changePass
+        },
+        watch: {
+            $route(to, from) {
+                // console.log(window.location.href)
+                // console.log(this.$route.path)
+                // console.log(this.$route.params)
+                if(this.$route.path === '/main/self') {
+                    this.isSelf = true
+                } else if (this.$route.path === '/main/share') {
+                    this.isSelf = false
+                }
+            }
         }
     }
 </script>
