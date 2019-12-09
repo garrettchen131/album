@@ -24,6 +24,7 @@
                 {{ set.desc }}
             </div>
 
+
             <div style="padding: 10px 10px 20px 50px;">
                 <div class="demo-image__preview" v-for="photo in set.photos" :key="photo" style="color:#fff;">
                     <div style="float:left;padding:10px;" >
@@ -41,7 +42,7 @@
 
 
 
-
+<!-- 第二中方案 -->
         <!-- <div class="block" style="margin-top:50px;">
             <el-timeline>
                 <div  v-for="set in albumSets" :key="set.uploadTime">
