@@ -67,14 +67,32 @@
             </el-timeline>
         </div> -->
 
+        <div class="setting">
+            <el-button type="danger" icon="el-icon-upload2" circle title="上传图片" @click="uploadPhotos"></el-button>
+        </div>
+    
 
-       
+
+
+        <el-dialog 
+            title="添加图片" 
+            :visible.sync="uploadPhotos_dialogTableVisible" 
+            center :append-to-body='true' 
+            :lock-scroll="false" 
+            width="840px"
+            position="absolute"
+            top="50px">
+            <addPhotos></addPhotos>
+        </el-dialog>
+
+
 
 
     </div>
 </template>
 
 <script>
+    import addPhotos from '@/components/Popup/AddPhotos';
     export default {
         data(){
             return {
@@ -83,7 +101,8 @@
                 albumCoverImage: this.$route.params.coverImage,
                 albumSets: this.$route.params.sets,
 
-                activeNames: ['1']
+                activeNames: ['1'],
+                uploadPhotos_dialogTableVisible: false
             }
         },
         methods:{
@@ -98,9 +117,13 @@
             },
             toPreview(set) {
                 this.$router.push({ name: 'album', params: set })
+            },
+            uploadPhotos() {
+                this.uploadPhotos_dialogTableVisible = true
             }
-
-
+        },
+        components: {
+            addPhotos
         }
     }
 </script>

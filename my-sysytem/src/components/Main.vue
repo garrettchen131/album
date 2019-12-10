@@ -78,8 +78,8 @@
                 this.$router.push('/home/login')
             },
             toAboutUs() {
-                this.$alert('你好，我是🥦🐔陈香伶，你太强了👍', '关于我', {
-                    confirmButtonText: '是的，陈香伶是🥦🐔'
+                this.$alert('你好，我是🥦🐔陈香伶', '关于我', {
+                    confirmButtonText: '很高兴认识你，🥦🐔陈香伶'
                 });
             },
             addAlbumSet() {
