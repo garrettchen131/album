@@ -1,7 +1,7 @@
 <template>
     <div>
 
-        <div style="padding: 10px 50px 100px 50px;" v-if="!canCheckDelete">
+        <!-- <div style="padding: 10px 50px 100px 50px;" v-if="!canCheckDelete">
             <div class="demo-image__preview" v-for="photo in photoList" :key="photo" style="color:#fff;">
                 <div style="float:left;padding:10px;margin-top:20px;" >
                     <el-image
@@ -11,7 +11,42 @@
                     </el-image>
                 </div>
             </div>
-        </div>
+        </div> -->
+
+
+        <el-container>
+            <el-aside width="350px">
+                <div class="demo-image__preview" v-for="photo in photoList" :key="photo" style="color:#fff;">
+                <div style="float:left;padding:10px;margin-top:10px;" >
+                    <el-image
+                        class="photo"
+                        :src="photo"
+                        :preview-src-list="photoList" fit="contain">
+                    </el-image>
+                </div>
+            </div>
+            </el-aside>
+            <el-container>
+                <el-main>
+                    <p class="noPreviewImgTip">选择要预览的图片</p>
+                    <!-- <div class="block">
+                        <el-carousel trigger="click" height="150px"  :autoplay="false">
+                            <el-carousel-item v-for="item in photoList" :key="item">
+                                <el-image
+                                    :src="item"
+                                    :preview-src-list="photoList" fit="contain">
+                                </el-image>
+                            </el-carousel-item>
+                        </el-carousel>
+                    </div> -->
+                </el-main>
+            </el-container>
+        </el-container>
+
+
+
+
+
 
 
         <el-checkbox 
@@ -82,8 +117,6 @@
         data(){
             return {
                 addPhotos_dialogTableVisible: false,
-                albumName: '《'+this.$route.params.title+'》',
-                coverImage: this.$route.params.coverImage,
                 photoList: this.$route.params.photos,
                 checkAll: false,
                 checkedPhotos: [],
@@ -138,20 +171,17 @@
 </script>
 
 <style lang='css' scoped>
-.pageHeader {
-    height:200px;
-}
 .content {
     text-align: right;
 }
 .setting {
     position: fixed;
     bottom: 20px;
-    right: 20px;
+    left: 20px;
 }
 .photo {
-    width: 150px;
-    height: 150px;
+    width: 90px;
+    height: 90px;
     border: 1px solid rgba(0, 0, 0, 0.15);
     border-radius: 5px;
 }
@@ -163,5 +193,74 @@
 .checkboxGroup {
     padding: 20px 50px 100px 50px;
     margin-top:20px;
+}
+
+/* .el-header {
+  background-color: #B3C0D1;
+  color: #333;
+  text-align: center;
+  line-height: 60px;
+ 
+} */
+
+.el-aside {
+  background-color: lightblue;
+  color: #333;
+  text-align: center;
+  padding: 0 7px;
+  height: 100%;
+  width: 300px;
+  /* line-height: 200px; */
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.el-main {
+  /* background-color: #ccc; */
+  color: #333;
+  text-align: center;
+  /* line-height: 160px; */
+  padding: 0;
+  /* border-left: 1px solid #000; */
+  position: fixed;
+  top: 0;
+  left: 350px;
+}
+
+.noPreviewImgTip {
+    left: 50%;
+}
+
+
+
+body > .el-container {
+  margin-bottom: 40px;
+}
+
+.el-container:nth-child(5) .el-aside,
+.el-container:nth-child(6) .el-aside {
+  line-height: 260px;
+}
+
+.el-container:nth-child(7) .el-aside {
+  line-height: 320px;
+}
+
+
+.el-carousel__item h3 {
+  color: #475669;
+  font-size: 14px;
+  opacity: 0.75;
+  line-height: 200px;
+  margin: 0;
+}
+
+.el-carousel__item:nth-child(2n) {
+  background-color: #99a9bf;
+}
+
+.el-carousel__item:nth-child(2n+1) {
+  background-color: #d3dce6;
 }
 </style>

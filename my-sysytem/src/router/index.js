@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import axios from 'axios'
+import VueAxios from 'vue-axios'
 
 
 // 引入Element UI 组件
@@ -7,7 +9,9 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 
 Vue.use(Router)
-Vue.use(ElementUI);
+Vue.use(ElementUI)
+Vue.use(VueAxios, axios)
+// Vue.prototype.axios = axios
 
 //防止访问重复路由报错
 const routerPush = Router.prototype.push

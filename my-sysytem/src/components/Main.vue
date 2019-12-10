@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="mainContainer">
         <div class="header">
              <el-dropdown>
                 <div class="user">
@@ -113,8 +113,8 @@
 </script>
 
 <style lang='css' scoped>
-/* body {
-    overflow: none !important;
+/* .mainContainer {
+    background: url(https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg);
 } */
 .header {
     height: 60px;

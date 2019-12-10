@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-      <router-view/>
+      <router-view style="height:100%;"/>
   </div>
 </template>
 
@@ -14,7 +14,13 @@ export default {
 html,body {
   margin: 0;
   padding: 0;
-  overflow:auto ! important;
+  /* overflow-y:scroll; */
+  height: 200%;
+  width: 100%;
+  /* background-color: lightblue; */
+  /* background-image: url(~@/assets/Bg6.jpg);
+  background-repeat: no-repeat;
+  background-size: 100%; */
 }
 
 #app {
@@ -22,5 +28,38 @@ html,body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
+}
+
+/* Set.vue */
+.el-card__body {
+    padding: 0;
+}
+.el-timeline-item__timestamp {
+  font-size: 22px;
+  padding: 10px;
+  color: black;
+}
+.el-timeline-item__wrapper {
+  margin-top: 70px;
+}
+
+/* detail.vue */
+/* .el-carousel__arrow {
+  height: 1000px;
+} */
+.el-image-viewer__wrapper {
+  /* top: 60px; */
+  left: 350px;
+  overflow: hidden;
+}
+.el-image-viewer__mask {
+  background: #ccc;
+  /* border-left: 1.2px solid rgb(141, 140, 140); */
+}
+.el-image-viewer__close {
+  display: inline-block;
+}
+.el-image-viewer__img {
+  transform: scale(2) rotate(0deg);
 }
 </style>

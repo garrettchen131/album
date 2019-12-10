@@ -13,8 +13,7 @@
                 <el-image :src="item.coverImage" class="image" fit="cover"></el-image>
                 <div style="padding: 14px;position:relative;">
                     <div class="text">
-                        <span style="font-weight:bold;font-size:18px;">《{{ item.title }}》</span>
-                        <p class="info" :title="item.introduction">{{ item.introduction }}</p>
+                        <span style="font-weight:bold;font-size:25px;">{{ item.title }}</span>
                     </div>
                     <div class="bottom">
                         <el-dropdown>
@@ -98,9 +97,10 @@
 
 <style lang='css' scoped>
 .startDiv {
-    padding:0 0 50px 70px;
+    /* padding:0 0 50px 70px; */
     /* background: url('https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg'); */
     /* height: 827px; */
+    /* background: url(https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg); */
 }
 .card {
     width: 350px;
@@ -141,7 +141,8 @@
   cursor: pointer;
 }
 .text {
-    text-align: left
+    text-align: left;
+    padding: 10px;
 }
 .info {
   line-height: 45px;

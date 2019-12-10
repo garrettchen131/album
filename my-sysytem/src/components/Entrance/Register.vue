@@ -10,14 +10,20 @@
                     </el-carousel>
                     <div style="padding: 14px;">
                         <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="70px" class="demo-ruleForm">
-                            <el-form-item label="邮箱" prop="email">
-                                <el-input v-model="ruleForm.email"></el-input>
+                            <el-form-item label="邮箱" prop="mail">
+                                <el-input v-model="ruleForm.mail"></el-input>
                             </el-form-item>
-                            <el-form-item label="密码" prop="pass">
+                            <el-form-item label="用户名" prop="name">
+                                <el-input v-model="ruleForm.name"></el-input>
+                            </el-form-item>
+                            <el-form-item label="密码" prop="password">
                                 <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
                             </el-form-item>
                             <el-form-item label="确认密码" prop="checkPass">
                                 <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
+                            </el-form-item>
+                            <el-form-item label="电话号码" prop="phone">
+                                <el-input v-model="ruleForm.phone"></el-input>
                             </el-form-item>
                             <el-form-item>
                                 <el-button type="primary" @click="submitForm('ruleForm')">注册</el-button>
@@ -31,6 +37,7 @@
 </template>
 
 <script>
+    import axios from 'axios';
     export default {
         data(){
             var checkEmail = (rule, value, callback) => {
@@ -45,6 +52,20 @@
                         callback();
                     }
                 }, 1000);
+            };
+            var checkName = (rule, value, callback) => {
+                if (!value) {
+                    return callback(new Error('用户名不能为空'));
+                } else {
+                    callback();
+                }
+            };
+            var checkPhone = (rule, value, callback) => {
+                if (!value) {
+                    return callback(new Error('电话号码不能为空'));
+                } else {
+                    callback();
+                }
             };
             var validatePass = (rule, value, callback) => {
                 if (value === '') {
@@ -77,19 +98,27 @@
                     { id: 6, image: 'https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg' }
                 ],
                 ruleForm: {
-                    email: '',
-                    pass: '',
-                    checkPass: ''
+                    mail: '',
+                    name: '',
+                    password: '',
+                    checkPass: '',
+                    phone: ''
                 },
                 rules: {
-                    email: [
+                    mail: [
                         { validator: checkEmail, trigger: 'blur' }
+                    ],
+                    name: [
+                        { validator: checkName, trigger: 'blur' }
                     ],
                     pass: [
                         { validator: validatePass, trigger: 'blur' }
                     ],
                     checkPass: [
                         { validator: validatePass2, trigger: 'blur' }
+                    ],
+                    phone: [
+                        { validator: checkPhone, trigger: 'blur' }
                     ]
                 }
             }
@@ -98,7 +127,22 @@
              submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        alert('submit!');
+                        // alert('submit!');
+                        // this.axios.post("http://139.9.205.50/user/register")
+                        this.$axois({
+                            method: 'post',
+                            url: 'http://139.9.205.50/user/register',
+                            data: this.ruleForm,
+                            header: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+
+                        }).then((res) => {
+                            console.log(res)
+                        }).catch((err) => {
+                            console.log(err)
+                        })
+                        
                     } else {
                         console.log('error submit!!');
                         return false;
@@ -108,6 +152,9 @@
             resetForm(formName) {
                 this.$refs[formName].resetFields();
             }
+        },
+        mounted() {
+            // this.axios.post()
         }
     }
 </script>

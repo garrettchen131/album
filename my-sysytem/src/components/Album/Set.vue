@@ -1,77 +1,47 @@
 <template>
-    <div style="padding-bottom:50px;">
+    <div class="setsContainer" ref="setsContainer">
 
         <!-- <div class="self_emptyTip" v-if="selfEmptyTip">
             你的相册集空空如也呢~😊<br>
             赶紧创建相册开始你的照片管理之旅吧！
         </div> -->
 
-        <div class="pageHeader">
-            <el-image :src="albumCoverImage" style="width:100%;height:100px;" fit="cover"></el-image>
-            <div style="position: absolute;top:46px;left:10px;">
-                <el-button icon="el-icon-arrow-left" circle @click="goBack" style="background:rgba(255,255,255,0.6);color:black;"></el-button>
-                <el-button style="font-size:18px;background:rgba(255,255,255,0.6);color:black;">{{ albumTitle }}</el-button>
-            </div>
-        </div>
-
-        <div class="set" v-for="set in albumSets" :key="set.uploadTime" @click="toPreview(set)">
-
-            <el-divider content-position="left">
-                {{ set.uploadTime }}
-            </el-divider>
-
-            <div style="padding:10px 50px 10px 200px;">
-                {{ set.desc }}
-            </div>
-
-
-            <div style="padding: 10px 10px 20px 50px;">
-                <div class="demo-image__preview" v-for="photo in set.photos" :key="photo" style="color:#fff;">
-                    <div style="float:left;padding:10px;" >
-                        <el-image
-                            class="photo"
-                            :src="photo"
-                            fit="contain">
-                        </el-image>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-
-
-
-<!-- 第二中方案 -->
-        <!-- <div class="block" style="margin-top:50px;">
+<!-- 二方案 -->
+        <div class="block setsTimeline">
             <el-timeline>
                 <div  v-for="set in albumSets" :key="set.uploadTime">
                      <el-timeline-item :timestamp="set.uploadTime" placement="top">
-                        <div class="el-timeline-item__tail"></div>
+                        <!-- <div class="el-timeline-item__tail"></div> -->
                         <el-card class="setCard">
                             <p class="setDesc">{{ set.desc }}</p>
-                            <div style="padding: 10px 10px 20px 50px;">
-                                <div class="demo-image__preview" v-for="photo in set.photos" :key="photo" style="color:#fff;">
-                                    <div style="float:left;padding:10px;" >
-                                        <el-image
-                                            class="photo"
-                                            :src="photo"
-                                            fit="contain">
-                                        </el-image>
-                                    </div>
+                            <div v-for="photo in set.photos.slice(0,3)" :key="photo" @click="toPreview(set)">
+                                <div class="imgContainer">
+                                    <el-image
+                                        class="setPhoto"
+                                        :src="photo"
+                                        fit="contain">
+                                    </el-image>
                                 </div>
                             </div>
+                            <el-tooltip class="item" effect="dark" content="上传图片" placement="right-start">
+                                <el-button type="danger" icon="el-icon-upload2" circle title="上传图片" @click="uploadPhotos" class="setting"></el-button>
+                            </el-tooltip>
                         </el-card>
                     </el-timeline-item>
                 </div>
             </el-timeline>
-        </div> -->
-
-        <div class="setting">
-            <el-button type="danger" icon="el-icon-upload2" circle title="上传图片" @click="uploadPhotos"></el-button>
         </div>
-    
 
+
+        <el-tooltip class="item" effect="dark" content="添加相册集" placement="top-end">
+            <el-button 
+                class="addSet"
+                type="primary" 
+                icon="el-icon-plus" 
+                circle title="添加相册集" 
+                @click="uploadPhotos">
+            </el-button>
+        </el-tooltip>
 
 
         <el-dialog 
@@ -124,57 +94,101 @@
         },
         components: {
             addPhotos
+        },
+        mounted() {
+            
         }
     }
 </script>
 
 <style lang='css' scoped>
-.pageHeader {
-    height:100px;
+.setsContainer {
+    /* width: 1300px; */
+    /* border: 1px solid #000; */
+    height: auto;
+    /* overflow: hidden; */
+    /* background-image: url(~@/assets/Bg6.jpg); */
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
 }
-.content {
-    text-align: right;
+.setsTimeline {
+    width: 1200px;
+    height: 100%;
+    /* position: absolute; */
+    /* margin-left: 50px; */
+    /* left: 50%; */
+    /* border: 1px solid #000; */
+    /* padding: 50px; */
+    border-left: 3px solid rgb(240, 153, 153);
+    margin: 0 auto;
 }
 .setting {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
 }
-.photo {
-    width: 50px;
-    height: 50px;
+.setPhoto {
+    width: 170px;
+    height: 170px;
     border: 1px solid rgba(0, 0, 0, 0.15);
     border-radius: 3px;
+    margin-right: 20px;
 }
-.el-divider__text, .el-link {
-    font-size: 18px;
-}
-/* .el-divider__text[data-v-24f327a2], .el-link[data-v-24f327a2] {
-    font-size: 16px;
-    color: rgb(194, 189, 189);
-} */
+
 .el-divider__text, .el-link {
     font-size: 18px;
     color: black;
 }
-.set {
-    width: 90%;
-    margin-left: 2.5%;
-    padding: 20px 50px 90px 50px;
-    margin-top: 20px;
-    /* border: 1px solid #000; */
-    box-shadow: 3px 2px 15px rgba(0, 0, 0, 0.15);
-}
-.set:hover {
-    cursor: pointer;
-}
 .setDesc {
+    /* position: absolute;
+    bottom: 0;
+    right: 0; */
+    width: 260px;
+    height: 195px;
     margin: 0;
+    float: right;
+    padding: 0 10px 0 40px;
+    font-size: 18px;
+    color: rgb(133, 128, 128);
+    border-left: 1px solid #ccc;
+    overflow-y: scroll;
+    margin-right: 10px;
+    /* border-bottom: 1px solid #ccc; */
+    /* border-radius: 10px; */
+    
 }
 .el-timeline {
-    padding-right: 40px;
+    padding: 50px 50px 50px 10px;
 }
 .setCard {
-    padding: 5px 30px 10px 10px;
+    padding: 50px;
+    opacity: 0.9;
+}
+.setThumbnail {
+    /* float: left; */
+    border: 1px solid #000;
+}
+.imgContainer {
+    float:left;
+    padding:10px;
+    /* border: 1px solid #000; */
+}
+.imgContainer:hover {
+    cursor: pointer;
+}
+.addSet {
+    position: absolute;
+    bottom: 20px;
+    right: 40px;
+}
+
+.clearfix:before,
+.clearfix:after {
+    display: table;
+    content: "";
+}
+
+.clearfix:after {
+    clear: both
 }
 </style>
