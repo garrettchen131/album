@@ -1,10 +1,14 @@
 <template>
     <div class="setsContainer" ref="setsContainer">
 
-        <!-- <div class="self_emptyTip" v-if="selfEmptyTip">
-            你的相册集空空如也呢~😊<br>
-            赶紧创建相册开始你的照片管理之旅吧！
-        </div> -->
+        <div class="selfEmptyTip" v-if="selfEmptyTip">
+            你的相册集好空呢~😊快上传一组吧<br>
+        </div>
+
+        <el-button-group class="pageHeaderBtn">
+            <el-button type="primary" icon="el-icon-arrow-left" @click="goBack">返回</el-button>
+            <el-button type="primary">{{albumTitle}}</el-button>
+        </el-button-group>
 
 <!-- 二方案 -->
         <div class="block setsTimeline">
@@ -13,7 +17,7 @@
                      <el-timeline-item :timestamp="set.uploadTime" placement="top">
                         <!-- <div class="el-timeline-item__tail"></div> -->
                         <el-card class="setCard">
-                            <p class="setDesc">{{ set.desc }}</p>
+                            <p class="setDesc" @click="showAllDesc(set.desc)">{{ set.desc }}</p>
                             <div v-for="photo in set.photos.slice(0,3)" :key="photo" @click="toPreview(set)">
                                 <div class="imgContainer">
                                     <el-image
@@ -55,6 +59,12 @@
             <addPhotos></addPhotos>
         </el-dialog>
 
+        <el-drawer
+            :visible.sync="drawer"
+            :with-header="false">
+            <span>{{detailDesc}}</span>
+        </el-drawer>
+
 
 
 
@@ -70,9 +80,11 @@
                 albumCreateTime: this.$route.params.createTime,
                 albumCoverImage: this.$route.params.coverImage,
                 albumSets: this.$route.params.sets,
-
+                drawer: false,
+                detailDesc: '',
                 activeNames: ['1'],
-                uploadPhotos_dialogTableVisible: false
+                uploadPhotos_dialogTableVisible: false,
+                selfEmptyTip: true
             }
         },
         methods:{
@@ -90,36 +102,61 @@
             },
             uploadPhotos() {
                 this.uploadPhotos_dialogTableVisible = true
+            },
+            showAllDesc(msg) {
+                this.drawer = true
+                this.detailDesc = msg
+            },
+            checkIsHavedSet() {
+                if(this.albumSets.length !== 0) {
+                    this.selfEmptyTip = false
+                }
             }
         },
         components: {
             addPhotos
         },
         mounted() {
-            
+            this.checkIsHavedSet()
         }
     }
 </script>
 
 <style lang='css' scoped>
+.pageHeaderBtn {
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+.selfEmptyTip {
+    font-size: 50px;
+    font-family: 幼圆;
+    font-weight: bold;
+    text-shadow: 8px 8px 5px rgba(204, 159, 159, 0.952);
+    color: #7a735d;
+    opacity: 0.7;
+    height: 80px;
+    position: absolute;
+    top: 60px;
+    left: 50%;
+    margin-left: -404.5px;
+}
 .setsContainer {
     /* width: 1300px; */
     /* border: 1px solid #000; */
     height: auto;
-    /* overflow: hidden; */
+    /* overflow: scroll; */
     /* background-image: url(~@/assets/Bg6.jpg); */
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
+    /* background-repeat: no-repeat; */
+    /* background-size: 100% 100%; */
 }
 .setsTimeline {
-    width: 1200px;
-    height: 100%;
-    /* position: absolute; */
-    /* margin-left: 50px; */
-    /* left: 50%; */
+    position: absolute;
+    left: 300px;
+    right: 300px;
+    top: 50px;
     /* border: 1px solid #000; */
-    /* padding: 50px; */
-    border-left: 3px solid rgb(240, 153, 153);
+    box-shadow: 0px 20px 30px rgba(0, 0, 0, 0.15);
     margin: 0 auto;
 }
 .setting {
@@ -150,15 +187,22 @@
     padding: 0 10px 0 40px;
     font-size: 18px;
     color: rgb(133, 128, 128);
+    line-height: 37px;
     border-left: 1px solid #ccc;
-    overflow-y: scroll;
+    overflow-y: hidden;
     margin-right: 10px;
+    cursor: pointer;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display:-webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient:vertical;
     /* border-bottom: 1px solid #ccc; */
     /* border-radius: 10px; */
     
 }
 .el-timeline {
-    padding: 50px 50px 50px 10px;
+    padding: 0px 50px 100px 20px;
 }
 .setCard {
     padding: 50px;
@@ -177,9 +221,9 @@
     cursor: pointer;
 }
 .addSet {
-    position: absolute;
+    position: fixed;
     bottom: 20px;
-    right: 40px;
+    right: 30px;
 }
 
 .clearfix:before,

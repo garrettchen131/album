@@ -3,12 +3,13 @@
         <div class="header">
              <el-dropdown>
                 <div class="user">
-                    <i class="el-icon-user" style="font-size: 25px;"></i>
-                    <span style="margin-right:50px;">{{ userno }}</span>
+                    <i class="el-icon-user" style="font-size: 28px;"></i>
+                    <!-- <span style="margin-right:50px;">{{ userno }}</span> -->
                 </div>
                 <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="toChangePass">修改密码</el-dropdown-item>
                 <el-dropdown-item @click.native="toAboutUs">关于我们</el-dropdown-item>
+                <el-dropdown-item @click.native="toDestroy">注销账户</el-dropdown-item>
                 <el-dropdown-item  @click.native="toLogin">退出</el-dropdown-item>
                 </el-dropdown-menu>
             </el-dropdown>
@@ -17,7 +18,8 @@
                 <el-button @click="toShare" type="danger" round>共享相册</el-button>
             </div>
             <div class="searchBtn">
-                <el-input style="width:350px;"
+                <el-input
+                    
                     placeholder="请输入内容"
                     prefix-icon="el-icon-search"
                     v-model="keywords">
@@ -25,7 +27,7 @@
             </div>
         </div>
         <div class="albumView">
-            <router-view :searchKeywords='keywords' :newAlbumInfo="newAlbumInfo"></router-view>
+            <router-view :searchKeywords='keywords' :newAlbumInfo="newAlbumInfo" class="showAlbum"></router-view>
         </div>
         <div class="bottomBtn">
             <el-button type="danger" icon="el-icon-plus" circle title="新建相册" @click="addAlbumSet" v-if="isSelf"></el-button>
@@ -57,10 +59,11 @@
     export default {
         data(){
             return {
+
                 isSelf: true,
                 addAlbum_dialogTableVisible: false,
                 changPass_dialogTableVisible: false,
-                userno: '1252005708@qq.com',
+                // userno: '1252005708@qq.com',
                 keywords: '',
                 newAlbumInfo: {}
             }
@@ -87,6 +90,46 @@
             },
             toChangePass() {
                 this.changPass_dialogTableVisible=true;
+            },
+            toDestroy() {
+                this.$confirm('此操作将永久删除该账户, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                })
+                .then(() => {
+                    this.$axios.post('http://139.9.205.50/user/logout')
+                    .then((res) => {
+                        console.log(res)
+                        var code = res.data.code
+                        switch(code) {
+                            case 200: 
+                                this.$notify({
+                                    title: '注销成功',
+                                    message: '该用户已永久删除',
+                                    type: 'success'
+                                });
+                                this.$router.push('/home/login')
+                                break;
+                            case 201: 
+                            case 401: 
+                            case 403: 
+                            case 404: 
+                                this.$notify.error({
+                                    title: '注销失败',
+                                    message: '找不到对应账户'
+                                });
+                                break;
+                        }
+                    }).catch((err) => {
+                        console.log('登陆失败'+err)
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });          
+                });
             },
             createAlbum(formInfo) {
                 // console.log(formInfo)
@@ -131,8 +174,9 @@
     top: 19px;
 }
 .el-dropdown .user {
-    font-size: 18px;
+    /* font-size: 18px; */
     cursor: pointer;
+    margin-right: 30px;
 }
 .bottomBtn {
     position: fixed;
@@ -151,7 +195,21 @@
 .searchBtn {
     position: absolute;
     top: 10px;
-    left: 50%;
+    left: 480px;
+    right: 110px;
     margin-left: -200px;
+}
+.showAlbum {
+    position: absolute;
+    top: 120px;
+    left: 100px;
+    right: 100px;
+    bottom: 60px;
+    /* border: 1px solid #000; */
+    /* border-radius: 20px; */
+    /* border-top-left-radius: 20px; */
+    box-shadow: 10px 20px 40px rgba(0, 0, 0, 0.2);
+    /* opacity: 0.8; */
+    overflow-y: scroll;
 }
 </style>

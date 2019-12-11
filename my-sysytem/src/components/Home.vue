@@ -39,6 +39,7 @@
 .v-leave-to {
     opacity: 0;
     transform: translateY(100px);
+    /* transform: translateX(-200px); */
 }
 .v-enter-active,
 .v-leave-active {
@@ -50,21 +51,24 @@
     top: 50px;
     margin-left: -67.5px;
     cursor: pointer;
-    color: #fff;
+    color: #7a735d;
+    transition: all .3s linear;
+    text-shadow: 20px 20px 10px rgba(0,0,0,0.2);
+}
+.link:hover {
+    /* color: rgb(236, 226, 226); */
+    top: 40px;
+    text-shadow: 30px 30px 15px rgba(0,0,0,0.15);
     transition: all .3s linear;
 }
 .container {
     height: 100%;
     background-image: url(../assets/Bg15.jpg);
 }
-.link:hover {
-    color: black;
-    transition: all .3s linear;
-}
 .view {
     position: absolute;
     left: 50%;
     margin-left: -350px;
-    top: 200px;
+    top: 160px;
 }
 </style>

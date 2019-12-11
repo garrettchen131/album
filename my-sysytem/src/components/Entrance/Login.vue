@@ -9,14 +9,15 @@
                         </el-carousel-item>
                     </el-carousel>
                     <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="50px" class="demo-ruleForm">
-                        <el-form-item label="邮箱" prop="email">
-                            <el-input v-model="ruleForm.email"></el-input>
+                        <el-form-item label="账号" prop="account">
+                            <el-input v-model="ruleForm.account" placeholder="邮箱 / 用户名 / 电话"></el-input>
                         </el-form-item>
-                        <el-form-item label="密码" prop="pass">
-                            <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
+                        <el-form-item label="密码" prop="password">
+                            <el-input type="password" v-model="ruleForm.password" autocomplete="off"></el-input>
                         </el-form-item>
-                        <el-form-item>
+                        <el-form-item class="commitBtn">
                             <el-button type="primary" @click="submitForm('ruleForm')">登录</el-button>
+                            <el-button @click="resetForm('ruleForm')">重置</el-button>
                         </el-form-item>
                     </el-form>
                 </el-card>
@@ -28,26 +29,48 @@
 <script>
     export default {
         data(){
-            var checkEmail = (rule, value, callback) => {
-                var inputPattern = /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/
+            var checkAccount = (rule, value, callback) => {
+                var emailPattern = /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/
+                var phonePattern = /^((1[3,5,8][0-9])|(14[5,7])|(17[0,6,7,8])|(19[7]))\d{8}$/
                 if (!value) {
-                    return callback(new Error('邮箱不能为空'));
+                    return callback(new Error('账号不能为空'));
                 }
                 setTimeout(() => {
-                    if (!inputPattern.test(value)) {
-                        callback(new Error('请输入正确的邮箱地址'));
+                    if (!emailPattern.test(value)) {
+                        // callback(new Error('请输入正确的邮箱地址'));
+                        // 不是邮箱
+                        this.ruleForm.email = ''
+                        if(!phonePattern.test(value)) {
+                            // 不是电话号码
+                            this.ruleForm.phone = ''
+                            // 是用户名
+                            this.ruleForm.name = value
+                            callback();
+                        } else {
+                            // 是电话号码
+                            this.ruleForm.phone = value
+                            // 不是用户名
+                            this.ruleForm.name = ''
+                            callback();
+                        }
                     } else {
+                        // 是邮箱
+                        this.ruleForm.email = value
+                        // 不是电话号码
+                        this.ruleForm.phone = ''
+                        // 不是用户名
+                        this.ruleForm.name = ''
                         callback();
                     }
                 }, 1000);
             };
             var validatePass = (rule, value, callback) => {
-                if (value === '') {
-                    callback(new Error('请输入密码'));
-                } else if (value !== '123456') {
-                    callback(new Error('密码错误!'));
+                if (!value) {
+                    return callback(new Error('请输入密码'));
+                } else {
+                    // callback(new Error('密码错误!'));
+                    callback();
                 } 
-                callback();
             };
             return {
                 carouselList: [
@@ -59,12 +82,15 @@
                     { id: 6, image: 'https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg' }
                 ],
                 ruleForm: {
+                    account: '',
                     email: '',
-                    pass: ''
+                    name: '',
+                    phone: '',
+                    password: ''
                 },
                 rules: {
-                    email: [
-                        { validator: checkEmail, trigger: 'blur' }
+                    account: [
+                        { validator: checkAccount, trigger: 'blur' }
                     ],
                     pass: [
                         { validator: validatePass, trigger: 'blur' }
@@ -75,12 +101,50 @@
         methods:{
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
-                    if (valid && (this.ruleForm.email==='1252005708@qq.com'&&this.ruleForm.pass==='123456')) {
+                    if (valid) {
                         // alert('submit!');
-                        this.$router.push('/main/self')
+                        this.$axios({
+                            method: 'post',
+                            url: 'http://139.9.205.50/user/login',
+                            data: {
+                                mail: this.ruleForm.email,
+                                name: this.ruleForm.name,
+                                password: this.ruleForm.password,
+                                phone: this.ruleForm.phone
+                            },
+                            header: {
+                                'Content-Type': 'application/json;charset=UTF-8'
+                            }
+                        }).then((res) => {
+                            console.log(res)
+                            var code = res.data.code
+                            switch(code) {
+                                case 200: 
+                                    this.$notify({
+                                        title: '登录成功',
+                                        message: 'Welcom to your Photo-Management-system',
+                                        type: 'success'
+                                    });
+                                    this.$router.push('/main/self')
+                                    break;
+                                case 201: 
+                                case 401: 
+                                case 403: 
+                                case 404:
+                                case 500:
+                                    this.$notify.error({
+                                        title: '登录失败',
+                                        message: '请检查账号和密码是否正确'
+                                    });
+                                    // this.resetForm('ruleForm')
+                                    break;
+                            }
+                        }).catch((err) => {
+                            console.log('登陆失败'+err)
+                        })
                     } else {
                         // console.log('error submit!!');
-                        this.$message.error('登录失败，请检查用户名和密码是否正确');
+                        this.$message.error('请检查账号和密码');
                         return false;
                     }
                 });
@@ -103,8 +167,8 @@
 .demo-ruleForm {
     position: relative;
 }
-.el-button {
-    margin-left: 245px;
+.commitBtn {
+    margin-left: 215px;
 }
 .image {
   width: 100%;

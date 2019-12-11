@@ -1,44 +1,34 @@
 <template>
     <div>
 
-        <!-- <div style="padding: 10px 50px 100px 50px;" v-if="!canCheckDelete">
-            <div class="demo-image__preview" v-for="photo in photoList" :key="photo" style="color:#fff;">
-                <div style="float:left;padding:10px;margin-top:20px;" >
-                    <el-image
-                        class="photo"
-                        :src="photo"
-                        :preview-src-list="photoList" fit="contain">
-                    </el-image>
-                </div>
-            </div>
-        </div> -->
-
 
         <el-container>
             <el-aside width="350px">
-                <div class="demo-image__preview" v-for="photo in photoList" :key="photo" style="color:#fff;">
-                <div style="float:left;padding:10px;margin-top:10px;" >
-                    <el-image
-                        class="photo"
-                        :src="photo"
-                        :preview-src-list="photoList" fit="contain">
-                    </el-image>
+                <div class="photoListContainer"> 
+                    <div class="demo-image__preview showPhotoList" v-for="photo in photoList" :key="photo" style="color:#fff;">
+                        <div 
+                            style="float:left;padding:10px;margin-top:10px;margin-left:5px;cursor:pointer;"
+                            @click="showPreviewViewer"
+                            v-if="!canCheckDelete">
+                            <el-image
+                                class="photo"
+                                :src="photo"
+                                fit="contain">
+                            </el-image>
+                        </div>
+                    </div>
                 </div>
-            </div>
             </el-aside>
             <el-container>
                 <el-main>
-                    <p class="noPreviewImgTip">选择要预览的图片</p>
-                    <!-- <div class="block">
-                        <el-carousel trigger="click" height="150px"  :autoplay="false">
-                            <el-carousel-item v-for="item in photoList" :key="item">
-                                <el-image
-                                    :src="item"
-                                    :preview-src-list="photoList" fit="contain">
-                                </el-image>
-                            </el-carousel-item>
-                        </el-carousel>
-                    </div> -->
+                    <el-image-viewer
+                        v-if="viewer"
+                        width="500px"
+                        height="500px"
+                        :on-close="closePreviewViewer"
+                        :url-list="photoList">
+                    </el-image-viewer>
+                    <p class="noPreviewImgTip" v-if="!viewer">选择要预览的图片</p>
                 </el-main>
             </el-container>
         </el-container>
@@ -122,12 +112,14 @@
                 checkedPhotos: [],
                 isIndeterminate: true,
                 canCheckDelete: false,
-                deletePhotos_dialogVisible: false
+                deletePhotos_dialogVisible: false,
+                viewer: false
             }
         },
         methods:{
             goBack() {
                 this.$router.go(-1)
+                // this.showViewer = true
             },
             addPhotos() {
                 this.addPhotos_dialogTableVisible = true
@@ -162,10 +154,18 @@
             },
             handleClose(done) {
                 done()
+            },
+            closePreviewViewer() {
+                this.viewer = false
+                // $('.el-image-viewer__wrapper')
+            },
+            showPreviewViewer() {
+                this.viewer = true
             }
         },
         components: {
-            addPhotos
+            addPhotos,
+            'el-image-viewer':()=>import('element-ui/packages/image/src/image-viewer')
         }
     }
 </script>
@@ -176,25 +176,31 @@
 }
 .setting {
     position: fixed;
-    bottom: 20px;
+    bottom: 10px;
     left: 20px;
 }
 .photo {
-    width: 90px;
-    height: 90px;
+    width: 120px;
+    height: 120px;
     border: 1px solid rgba(0, 0, 0, 0.15);
     border-radius: 5px;
+    /* margin-left: 5px; */
 }
 .checkAllBox {
     position: absolute;
     bottom: 20px;
-    left: 20px;
+    left: 200px;
 }
 .checkboxGroup {
-    padding: 20px 50px 100px 50px;
-    margin-top:20px;
+    /* padding: 20px 50px 100px 50px; */
+    margin-top:15px;
+    width: 400px;
 }
-
+.el-checkbox {
+    margin-right: 0;
+    margin-left: 10px;
+    margin-top: 20px;
+}
 /* .el-header {
   background-color: #B3C0D1;
   color: #333;
@@ -204,10 +210,10 @@
 } */
 
 .el-aside {
-  background-color: lightblue;
+  background-color: rgb(253, 239, 239);
   color: #333;
   text-align: center;
-  padding: 0 7px;
+  padding: 7px ;
   height: 100%;
   width: 300px;
   /* line-height: 200px; */
@@ -229,7 +235,16 @@
 }
 
 .noPreviewImgTip {
+    font-size: 60px;
+    color: #7a735d;
+    font-weight: bold;
+    font-family: 幼圆;
+    text-shadow: 8px 8px 5px rgba(204, 159, 159, 0.952);
+    position: fixed;
     left: 50%;
+    top: 50%;
+    margin-left: -53px;
+    margin-top: -33px;
 }
 
 
@@ -262,5 +277,16 @@ body > .el-container {
 
 .el-carousel__item:nth-child(2n+1) {
   background-color: #d3dce6;
+}
+
+.photoListContainer {
+    position: fixed;
+    width: 320px;
+    top: 0;
+    left: 0;
+    bottom: 65px;
+    padding: 15px;
+    overflow-y: scroll;
+    /* border: 1px solid red; */
 }
 </style>

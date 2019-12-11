@@ -2,6 +2,8 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
+import qs from 'qs'
+import Global from '../../static/config/global'
 
 
 // 引入Element UI 组件
@@ -10,14 +12,22 @@ import 'element-ui/lib/theme-chalk/index.css';
 
 Vue.use(Router)
 Vue.use(ElementUI)
-Vue.use(VueAxios, axios)
-// Vue.prototype.axios = axios
+// Vue.use(VueAxios, axios)
+
+Vue.prototype.$axios = axios
+Vue.prototype.$qs = qs
+Vue.prototype.GLOBAL = Global
+Vue.prototype.HOST = '/api'
 
 //防止访问重复路由报错
 const routerPush = Router.prototype.push
 Router.prototype.push = function push(location) {
   return routerPush.call(this, location).catch(error=> error)
 }
+
+
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
+// axios.defaults.baseURL = '/api'
 
 
 //引入路由组件
@@ -33,6 +43,8 @@ import addAlbum from '@/components/Popup/AddAlbumSet';
 import changePass from '@/components/Popup/ChangePassword';
 import addPhotos from '@/components/Popup/AddPhotos';
 import editAlbum from '@/components/Popup/EditAlbumInfo';
+
+import test from '@/components/TestAxios'
 
 // 暴露路由对象
 export default new Router({
@@ -97,6 +109,10 @@ export default new Router({
       path: '/set',
       name: 'set',
       component: set
+    },
+    {
+      path: '/test',
+      component: test
     }
   ]
 })

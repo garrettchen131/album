@@ -14,13 +14,16 @@ export default {
 html,body {
   margin: 0;
   padding: 0;
-  /* overflow-y:scroll; */
-  height: 200%;
+  overflow-y:scroll;
+  overflow-x: hidden;
+  /* overflow-y: invisible; */
+  /* height: 100%; */
   width: 100%;
   /* background-color: lightblue; */
-  /* background-image: url(~@/assets/Bg6.jpg);
-  background-repeat: no-repeat;
-  background-size: 100%; */
+  background-image: url(~@/assets/Bg6.jpg);
+  /* background-repeat: no-repeat; */
+  background-size: 100%;
+  /* overflow: -moz-scrollbars-none; */
 }
 
 #app {
@@ -29,6 +32,16 @@ html,body {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
 }
+
+::-webkit-scrollbar {
+    width: 6px;
+    background-color: rgb(255, 211, 218);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #f78ea0;
+}
+
 
 /* Set.vue */
 .el-card__body {
@@ -41,6 +54,13 @@ html,body {
 }
 .el-timeline-item__wrapper {
   margin-top: 70px;
+}
+.el-drawer__body {
+  padding: 50px;
+  line-height: 35px;
+  font-size: 20px;
+  overflow-y: scroll;
+  background-color: rgb(226, 244, 250);
 }
 
 /* detail.vue */

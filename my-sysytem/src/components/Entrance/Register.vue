@@ -17,7 +17,7 @@
                                 <el-input v-model="ruleForm.name"></el-input>
                             </el-form-item>
                             <el-form-item label="密码" prop="password">
-                                <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
+                                <el-input type="password" v-model="ruleForm.password" autocomplete="off"></el-input>
                             </el-form-item>
                             <el-form-item label="确认密码" prop="checkPass">
                                 <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
@@ -25,8 +25,9 @@
                             <el-form-item label="电话号码" prop="phone">
                                 <el-input v-model="ruleForm.phone"></el-input>
                             </el-form-item>
-                            <el-form-item>
+                            <el-form-item class="commitBtn">
                                 <el-button type="primary" @click="submitForm('ruleForm')">注册</el-button>
+                                <el-button @click="resetForm('ruleForm')">重置</el-button>
                             </el-form-item>
                         </el-form>
                     </div>
@@ -37,7 +38,7 @@
 </template>
 
 <script>
-    import axios from 'axios';
+    // import axios from 'axios';
     export default {
         data(){
             var checkEmail = (rule, value, callback) => {
@@ -61,15 +62,21 @@
                 }
             };
             var checkPhone = (rule, value, callback) => {
+                var inputPattern = /^((1[3,5,8][0-9])|(14[5,7])|(17[0,6,7,8])|(19[7]))\d{8}$/
                 if (!value) {
                     return callback(new Error('电话号码不能为空'));
-                } else {
-                    callback();
                 }
+                setTimeout(() => {
+                    if (!inputPattern.test(value)) {
+                        callback(new Error('请输入正确的电话号码'));
+                    } else {
+                        callback();
+                    }
+                }, 1000);
             };
             var validatePass = (rule, value, callback) => {
                 if (value === '') {
-                    callback(new Error('请输入密码'));
+                    return callback(new Error('请输入密码'));
                 } else if (value.length < 6) {
                     callback(new Error('密码不能少于6位，请重新输入'));
                 } else {
@@ -82,7 +89,7 @@
             var validatePass2 = (rule, value, callback) => {
                 if (value === '') {
                     callback(new Error('请再次输入密码'));
-                } else if (value !== this.ruleForm.pass) {
+                } else if (value !== this.ruleForm.password) {
                     callback(new Error('两次输入密码不一致!'));
                 } else {
                     callback();
@@ -121,6 +128,7 @@
                         { validator: checkPhone, trigger: 'blur' }
                     ]
                 }
+                // registerFailMsg: ''
             }
         },
         methods:{
@@ -128,17 +136,54 @@
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         // alert('submit!');
-                        // this.axios.post("http://139.9.205.50/user/register")
-                        this.$axois({
+                        // this.$axios.post(this.GLOBAL.host+"/user/register",this.$qs.stringify({
+                        //     mail: this.ruleForm.mail,
+                        //     name: this.ruleForm.name,
+                        //     password: this.ruleForm.password,
+                        //     phone: this.ruleForm.phone
+                        // }))
+                        // .then(res => {
+                        //     console.log(res)
+                        // })
+                        // .catch(err => {
+                        //     console.log(err)
+                        // })
+
+                        this.$axios({
                             method: 'post',
                             url: 'http://139.9.205.50/user/register',
-                            data: this.ruleForm,
-                            header: {
-                                'Content-Type': 'application/x-www-form-urlencoded'
+                            data: {
+                                mail: this.ruleForm.mail,
+                                name: this.ruleForm.name,
+                                password: this.ruleForm.password,
+                                phone: this.ruleForm.phone
                             },
-
+                            header: {
+                                'Content-Type': 'application/json;charset=UTF-8'
+                            }
                         }).then((res) => {
                             console.log(res)
+                            var code = res.data.code
+                            switch(code) {
+                                case 200: 
+                                    this.$notify({
+                                        title: '注册成功',
+                                        message: '快去登录吧！',
+                                        type: 'success'
+                                    });
+                                    this.$router.push('/home/login')
+                                    break;
+                                case 201: 
+                                case 401: 
+                                case 403: 
+                                case 404: 
+                                    this.$notify.error({
+                                        title: '注册失败',
+                                        message: '邮箱/用户名/电话 已被注册，请重试'
+                                    });
+                                    this.resetForm('ruleForm')
+                                    break;
+                            }
                         }).catch((err) => {
                             console.log(err)
                         })
@@ -167,8 +212,8 @@
   font-size: 13px;
   color: #999;
 }
-.el-button {
-    margin-left: 215px;
+.commitBtn {
+    margin-left: 175px;
 }
 .image {
   width: 100%;
