@@ -117,7 +117,7 @@
             addPhotos
         },
         mounted() {
-            this.checkIsHavedSet()
+            // this.checkIsHavedSet()
         }
     }
 </script>

@@ -106,6 +106,7 @@
                         this.$axios({
                             method: 'post',
                             url: 'http://139.9.205.50/user/login',
+                            withCredentials : true,
                             data: {
                                 mail: this.ruleForm.email,
                                 name: this.ruleForm.name,

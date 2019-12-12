@@ -19,8 +19,8 @@ html,body {
   /* overflow-y: invisible; */
   /* height: 100%; */
   width: 100%;
-  /* background-color: lightblue; */
-  background-image: url(~@/assets/Bg6.jpg);
+  /* background-color: ; */
+  /* background-image: url(~@/assets/Bg13.jpg); */
   /* background-repeat: no-repeat; */
   background-size: 100%;
   /* overflow: -moz-scrollbars-none; */

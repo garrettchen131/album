@@ -1,10 +1,11 @@
 <template>
     <div class="mainContainer">
+
+        <!-- 导航栏头部 -->
         <div class="header">
              <el-dropdown>
                 <div class="user">
                     <i class="el-icon-user" style="font-size: 28px;"></i>
-                    <!-- <span style="margin-right:50px;">{{ userno }}</span> -->
                 </div>
                 <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="toChangePass">修改密码</el-dropdown-item>
@@ -26,20 +27,30 @@
                 </el-input>
             </div>
         </div>
+
+        <!-- 我的相册 和 共享相册 子组件展示的地方 -->
         <div class="albumView">
-            <router-view :searchKeywords='keywords' :newAlbumInfo="newAlbumInfo" class="showAlbum"></router-view>
+            <router-view :searchKeywords='keywords' :updateAlbumList='albumList' class="showAlbum" @func="getCompMsg"></router-view>
+            <!-- <router-view :searchKeywords='keywords' :newAlbumInfo="newAlbumInfo" class="showAlbum" :func="getCompMsg"></router-view> -->
         </div>
+
+        <!-- 添加相册按钮 -->
         <div class="bottomBtn">
-            <el-button type="danger" icon="el-icon-plus" circle title="新建相册" @click="addAlbumSet" v-if="isSelf"></el-button>
+            <el-button type="danger" icon="el-icon-plus" circle title="新建相册" @click="addAlbum" v-if="isSelf"></el-button>
         </div>
-        <el-dialog 
+
+
+
+        <!-- <el-dialog 
             title="创建相册" 
             :visible.sync="addAlbum_dialogTableVisible" 
             center :append-to-body='true' 
             :lock-scroll="false" 
             width="800px">
             <addAlbum @func="createAlbum"></addAlbum>
-        </el-dialog>
+        </el-dialog> -->
+
+
         <el-dialog 
             title="修改密码" 
             :visible.sync="changPass_dialogTableVisible" 
@@ -54,18 +65,16 @@
 </template>
 
 <script>
-    import addAlbum from '@/components/Popup/AddAlbumSet';
+    import addAlbum from '@/components/Popup/AddAlbum';
     import changePass from '@/components/Popup/ChangePassword';
     export default {
         data(){
             return {
-
                 isSelf: true,
                 addAlbum_dialogTableVisible: false,
                 changPass_dialogTableVisible: false,
-                // userno: '1252005708@qq.com',
-                keywords: '',
-                newAlbumInfo: {}
+                keywords: '',   //用于绑定搜索的关键字
+                albumList: []
             }
         },
         methods:{
@@ -85,8 +94,76 @@
                     confirmButtonText: '很高兴认识你，🥦🐔陈香伶'
                 });
             },
-            addAlbumSet() {
-                this.addAlbum_dialogTableVisible=true;
+            addAlbum() {
+                this.$prompt('相册名称', '新建相册', {
+                    confirmButtonText: '创建',
+                    cancelButtonText: '取消',
+                    inputValidator: (value) => {
+                        if(!value) {
+                            return '请输入相册名称'
+                        } else {
+                            return true
+                        }
+                    },
+                    inputErrorMessage: ''
+                }).then(({ value }) => {
+                    this.$axios({
+                        method: 'post',
+                        url: 'http://139.9.205.50/album/add',
+                        data: {
+                            // id: 0,
+                            title: value
+                        }, 
+                        header: {
+                            'Content-Type': 'application/json;charset=UTF-8'
+                        }
+                    }).then((res) => {
+                        console.log(res)
+                        var code = res.data.code
+                        switch(code) {
+                            case 200: 
+                                this.$notify({
+                                    title: '相册创建成功',
+                                    message: '快去上传一组照片试试吧！',
+                                    type: 'success'
+                                });
+                                this.albumList.unshift(res.data)
+                                console.log(this.albumList.length+'hhhhh'+this.albumList)
+                                break;
+                            case 201: 
+                                console.log(value)
+                                this.$notify.error({
+                                    title: '相册名已经被使用',
+                                    message: '请重试'
+                                });
+                                break;
+                            case 401: 
+                            case 403: 
+                            case 404: 
+                                console.log(value)
+                                this.$notify.error({
+                                    title: '相册创建失败',
+                                    message: '请重试'
+                                });
+                                this.newAlbumInfo = res.data
+                                break;
+                            case 500:
+                                console.log(value)
+                                this.$notify.error({
+                                    title: '相册创建失败',
+                                    message: '请先登录！'
+                                });
+                                break;
+                        }
+                    }).catch((err) => {
+                        console.log(err)
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '取消输入'
+                    });       
+                });
             },
             toChangePass() {
                 this.changPass_dialogTableVisible=true;
@@ -109,7 +186,7 @@
                                     message: '该用户已永久删除',
                                     type: 'success'
                                 });
-                                this.$router.push('/home/login')
+                                this.$router.replace('/home/login')
                                 break;
                             case 201: 
                             case 401: 
@@ -131,9 +208,11 @@
                     });          
                 });
             },
-            createAlbum(formInfo) {
-                // console.log(formInfo)
-                this.newAlbumInfo = formInfo
+            // createAlbum(formInfo) {
+            //     this.newAlbumInfo = formInfo
+            // },
+            getCompMsg(albumEditedInfo) {
+
             }
         },
         components: {
@@ -201,10 +280,10 @@
 }
 .showAlbum {
     position: absolute;
-    top: 120px;
+    top: 60px;
     left: 100px;
     right: 100px;
-    bottom: 60px;
+    bottom: 0px;
     /* border: 1px solid #000; */
     /* border-radius: 20px; */
     /* border-top-left-radius: 20px; */

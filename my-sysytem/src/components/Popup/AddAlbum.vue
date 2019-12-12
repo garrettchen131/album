@@ -1,12 +1,12 @@
 <template>
   <div>
-    <el-form :model="addAlbumSetForm" :rules="rules" ref="addAlbumSetForm" label-width="100px" class="demo-addAlbumSetForm">
-      <el-form-item label="相册名称" prop="name">
-        <el-input v-model="addAlbumSetForm.name"></el-input>
+    <el-form :model="addAlbumForm" :rules="rules" ref="addAlbumForm" label-width="100px" class="demo-addAlbumForm">
+      <el-form-item label="相册名称" prop="title">
+        <el-input v-model="addAlbumForm.title"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="submitAddAlbumForm('addAlbumSetForm',addAlbumSetForm)">立即创建</el-button>
-        <el-button @click="resetAddAlbumForm('addAlbumSetForm')">重置</el-button>
+        <el-button type="primary" @click="submitAddAlbumForm('addAlbumForm')">立即创建</el-button>
+        <el-button @click="resetAddAlbumForm('addAlbumForm')">重置</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -16,29 +16,22 @@
 export default {
   data () {
     return {
-      addAlbumSetForm: {
-        name: ''
+      addAlbumForm: {
+        title: ''
       },
       rules: {
-        name: [
+        title: [
           { required: true, message: '请输入活动名称', trigger: 'blur' },
-          { min: 1, max: 15, message: '长度在 1 到 15 个字符', trigger: 'blur' }
+          { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
         ]
       }
     }
   },
   methods: {
-    submitAddAlbumForm(formName,formInfo) {
+    submitAddAlbumForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            // alert('submit!');
-            this.$emit('func', formInfo)
-
-
-            this.$message({
-              message: '恭喜你，相册创建成功',
-              type: 'success'
-            });
+            alert('ok')
           } else {
             // console.log('error submit!!');
             this.$message.error('相册创建失败，请重新创建');
@@ -55,7 +48,7 @@ export default {
 </script>
 
 <style lang="css">
-.demo-addAlbumSetForm {
+.demo-addAlbumForm {
   width: 700px;
   /* border: 1px solid #ccc; */
   /* border-radius: 10px; */

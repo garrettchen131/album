@@ -28,6 +28,7 @@ Router.prototype.push = function push(location) {
 
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 // axios.defaults.baseURL = '/api'
+axios.defaults.withCredentials = true
 
 
 //引入路由组件
@@ -39,7 +40,7 @@ import main from '@/components/Main';
 import album from '@/components/Album/Detail';
 import set from '@/components/Album/Set';
 import home from '@/components/Home';
-import addAlbum from '@/components/Popup/AddAlbumSet';
+import addAlbum from '@/components/Popup/AddAlbum';
 import changePass from '@/components/Popup/ChangePassword';
 import addPhotos from '@/components/Popup/AddPhotos';
 import editAlbum from '@/components/Popup/EditAlbumInfo';

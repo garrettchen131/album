@@ -1,14 +1,15 @@
 <template>
     <div class="startDiv">
 
-
+        <!--当页面没有相册时提示 -->
         <div class="self_emptyTip" v-if="selfEmptyTip">
-            你的相册空空如也呢~😄<br>
+            你的相册空空如也呢
             赶紧创建相册开始你的照片管理之旅吧！
         </div>
 
+        <!-- 循环相册列表，以卡片形式输出展示在页面 -->
         <el-row>
-            <div :span="4" v-for="item in search(searchKeywords)" :key="item.id" class="cardContainer">
+            <div :span="4" v-for="item in albumList" :key="item.id" class="cardContainer">
                 <el-card :body-style="{ padding: '0px' }"  @click.native="openAlbum(item)" class="card">
                     <div style="padding: 14px;position:relative;">
                         <div class="text">
@@ -21,7 +22,7 @@
                                     <el-dropdown-item>分享</el-dropdown-item>
                                     <el-dropdown-item>共享</el-dropdown-item>
                                     <el-dropdown-item @click.native="editAlbum">编辑</el-dropdown-item>
-                                    <el-dropdown-item style="color:red;" @click.native="judgeAlbum(item.id)">删除</el-dropdown-item>
+                                    <el-dropdown-item style="color:red;" @click.native="deleteAlbum(item.id)">删除</el-dropdown-item>
                                 </el-dropdown-menu>
                             </el-dropdown>
                         </div>
@@ -31,7 +32,7 @@
             </div>
         </el-row>
 
-
+        <!-- 点击删除相册按钮的提示框 -->
         <el-dialog
             title="删除相册！"
             :visible.sync="deleteAlbum_dialogVisible"
@@ -44,7 +45,8 @@
                 <el-button type="primary" @click="deleteAlbum">确 定</el-button>
             </span>
         </el-dialog>
-        <el-dialog 
+
+        <!-- <el-dialog 
             title="编辑相册信息" 
             :visible.sync="editAlbum_dialogTableVisible" 
             center :append-to-body='true' 
@@ -52,7 +54,7 @@
             width="800px"
             top="300px">
             <editAlbum></editAlbum>
-        </el-dialog>
+        </el-dialog> -->
 
 
 
@@ -65,91 +67,199 @@
     export default {
         data(){
             return {
-                currentDate: new Date(),
-                albumList: [    // 这里的数据用axios向后端发请求，请求数据
-                    {
-                        id: 1,
-                        title: '美好时光',
-                        introduction: '记录了我高中青春哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈',
-                        createTime: '2019-12-18 Tue',
-                        sets: [
-                            {
-                                uploadTime: '2019-12-15 Tue',
-                                desc: '今天去了都江堰，记录一下通过设置 autosize 属性可以使得文本域的高度能够根据文本内容自动进行调整，并且 autosize 还可以设定为一个对象，指定最小行数和最大行数。通过设置 autosize 属性可以使得文本域的高度能够根据文本内容自动进行调整，并且 autosize 还可以设定为一个对象，指定最小行数和最大行数。',
-                                photos: [
-                                    'https://fuss10.elemecdn.com/d/e6/c4d93a3805b3ce3f323f7974e6f78jpeg.jpeg',
-                                    'https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg',
-                                    'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg',
-                                    'https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg'
-                                ]
-                            },
-                            {
-                                uploadTime: '2019-12-18 Tue',
-                                 desc: '今天去了都江堰，记录一下',
-                                photos: [
-                                    'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg',
-                                    'https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg'
-                                ]
-                            },
-                        ]
-                    },
-                    {
-                        id: 2,
-                        title: '环游世界',
-                        introduction: '珠穆朗玛峰我来啦！',
-                        createTime: '2019-12-18 Tue',
-                        sets: [
-                            
-                        ]
-                    }
-                ],
-                deleteAlbum_dialogVisible: false,
-                editAlbum_dialogTableVisible: false,
-                selfEmptyTip: true
+                albumList: [],  //相册列表
+                deleteAlbum_dialogVisible: false,   //是否打开删除相册的确认框，默认为false（不打开）
+                // editAlbum_dialogTableVisible: false,
+                selfEmptyTip: true  //是否显示相册为空的提示，默认为true（提示）
+                // loginID: this.$route.params.id
+                // albumEditedTitle: ''
             }
         },
         methods:{
-            search(searchKeywords) {
-                var newalbumList = this.albumList.filter(item => {
-                    if(item.title.includes(searchKeywords)) {
-                        return item
-                    }
-                })
-                return newalbumList
-            },
+            // 根据相册标题为关键字搜索
+            // search(searchKeywords) {
+            //     var newalbumList = this.albumList.filter(item => {
+            //         if(item.title && item.title.includes(searchKeywords)) {
+            //             return item
+            //         }
+            //     })
+            //     return newalbumList
+            // },
+            // 编辑相册
             editAlbum() {
-                // var htmlStr = '<h1>message</h1>'
-                // this.$alert(htmlStr, '编辑《'+item.title+item.id+'》相册信息', {
-                //     dangerouslyUseHTMLString: true
-                // });
-                this.editAlbum_dialogTableVisible=true;
+                this.$prompt('新相册名称', '编辑相册', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    inputValidator: (value) => {
+                        if(!value) {
+                            return '请输入新相册名称'
+                        } else {
+                            return true
+                        }
+                    },
+                    inputErrorMessage: ''
+                }).then(({ value }) => {
+                    this.$axios({
+                        method: 'post',
+                        url: 'http://139.9.205.50/album/change',
+                        data: {
+                            id: 0,
+                            title: value
+                        }, 
+                        header: {
+                            'Content-Type': 'application/json;charset=UTF-8'
+                        }
+                    }).then((res) => {
+                        console.log(res)
+                        var code = res.data.code
+                        switch(code) {
+                            case 200: 
+                                this.$notify({
+                                    title: '相册修改成功',
+                                    message: '快去看看',
+                                    type: 'success'
+                                });
+                                // this.$emit('func', res.data)
+                                break;
+                            case 201: 
+                                console.log(value)
+                                this.$notify.error({
+                                    title: '相册名已经被使用',
+                                    message: '请重试'
+                                });
+                                break;
+                            case 401: 
+                            case 403: 
+                            case 404: 
+                                console.log(value)
+                                this.$notify.error({
+                                    title: '相册创建失败',
+                                    message: '请重试'
+                                });
+                                this.newAlbumInfo = res.data
+                                break;
+                            case 500:
+                                console.log(value)
+                                this.$notify.error({
+                                    title: '相册创建失败',
+                                    message: '请先登录！'
+                                });
+                                break;
+                        }
+                    }).catch((err) => {
+                        console.log(err)
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '取消输入'
+                    });       
+                });
             },
+            // 打开相册，进入相册集详情页面
             openAlbum(item) {
                 this.$router.push({ name: 'set', params: item })
             },
+            // 删除相册
             deleteAlbum(id) {
-                // this.deleteAlbum_dialogVisible = false
-                // var index = this.albumList.indexOf(this.checkedPhotos[i])
-                // this.photoList.splice(index, 1)
-                // this.checkedPhotos = []
+                this.$axios({
+                    method: 'post',
+                    url: 'http://139.9.205.50/album/delete/'+id,
+                    header: {
+                        'Content-Type': 'application/json;charset=UTF-8'
+                    }
+                }).then((res) => {
+                    console.log(res)
+                    var code = res.data.code
+                    switch(code) {
+                        case 200: 
+                            this.$notify({
+                                title: '相册删除成功',
+                                message: '快去看看',
+                                type: 'success'
+                            });
+                            console.log('length'+this.albumList.length)
+                            break;
+                        case 201:
+                        case 401: 
+                        case 403: 
+                        case 404: 
+                            this.$notify.error({
+                                title: '相册删除失败',
+                                message: '请重试'
+                            });
+                            this.newAlbumInfo = res.data
+                            break;
+                        case 500:
+                            this.$notify.error({
+                                title: '相册删除失败',
+                                message: '请先登录！'
+                            });
+                            break;
+                    }
+                }).catch((err) => {
+                    console.log(err)
+                })
             },
+            // 判断是否显示删除相册的弹框
             judgeAlbum() {
                 this.deleteAlbum_dialogVisible = true
             },
+            // 处理关闭
             handleClose(done) {
                 done()
             },
+            ///////////////////////////////////////////////////【mounted执行】
+            // 检查页面加载时相册列表是否为空，空则显示空提示
             checkData() {
+                console.log('md'+this.albumList.length+'   '+this.albumList)
                 if(this.albumList.length !== 0) {
                     this.selfEmptyTip = false
                 }
+            },
+            // 获取相册列表
+            getAlbumList() {
+                this.$axios.get('http://139.9.205.50/album/get')
+                .then((res) => {
+                    console.log(res)
+                    var code = res.data.code
+                    switch(code) {
+                        case 200: 
+                            this.$notify({
+                                title: '相册获取成功',
+                                message: '快去看看',
+                                type: 'success'
+                            });
+                            this.albumList = this.updateAlbumList
+                            console.log('md'+this.albumList.length+'   '+this.albumList)
+                            break;
+                        case 201: 
+                        case 401: 
+                        case 403: 
+                        case 404: 
+                            this.$notify.error({
+                                title: '相册创建失败',
+                                message: '请重试'
+                            });
+                            break;
+                        case 500:
+                            this.$notify.error({
+                                title: '500',
+                                message: '请先登录！'
+                            });
+                            break;
+                    }
+                }).catch((err) => {
+                    console.log(err)
+                })
             }
         },
         components: {
             editAlbum
         },
-        props: ['searchKeywords', 'newAlbumInfo'],
+        props: ['searchKeywords', 'newAlbumInfo', 'updateAlbumList'],
         mounted() {
+            this.getAlbumList()
             this.checkData()
         }
     }
@@ -213,9 +323,10 @@
   overflow: hidden;
 }
 .self_emptyTip {
-    font-size: 60px;
-    font-weight: bold;
-    color: #7a735d;
+    font-size: 30px;
+    /* font-weight: bold; */
+    /* color: #7a735d; */
+    color: #000;
     font-family: 幼圆;
     text-shadow: 8px 8px 5px rgba(204, 159, 159, 0.952);
     position: absolute;
