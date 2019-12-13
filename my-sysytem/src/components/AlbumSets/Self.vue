@@ -8,20 +8,21 @@
         </div>
 
         <!-- 循环相册列表，以卡片形式输出展示在页面 -->
-        <el-row>
+        <el-row class="row">
             <div :span="4" v-for="item in albumList" :key="item.id" class="cardContainer">
-                <el-card :body-style="{ padding: '0px' }"  @click.native="openAlbum(item)" class="card">
-                    <div style="padding: 14px;position:relative;">
-                        <div class="text">
+                <el-card :body-style="{ padding: '0px' }" class="card">
+                    <div style="padding: 20px;position:relative;">
+                        <div class="text" @click="openAlbum(item)">
+                            <i class="el-icon-camera" style="font-size:22px;margin-right:10px;"></i>
                             <span style="font-weight:bold;font-size:25px;">{{ item.title }}</span>
                         </div>
                         <div class="bottom">
                             <el-dropdown>
-                                <i class="el-icon-more" style="font-size:17px;"></i>
+                                <i class="el-icon-more" style="font-size:20px;"></i>
                                 <el-dropdown-menu slot="dropdown">
                                     <el-dropdown-item>分享</el-dropdown-item>
                                     <el-dropdown-item>共享</el-dropdown-item>
-                                    <el-dropdown-item @click.native="editAlbum">编辑</el-dropdown-item>
+                                    <el-dropdown-item @click.native="editAlbum(item.id)">编辑</el-dropdown-item>
                                     <el-dropdown-item style="color:red;" @click.native="deleteAlbum(item.id)">删除</el-dropdown-item>
                                 </el-dropdown-menu>
                             </el-dropdown>
@@ -86,7 +87,7 @@
             //     return newalbumList
             // },
             // 编辑相册
-            editAlbum() {
+            editAlbum(albumID) {
                 this.$prompt('新相册名称', '编辑相册', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
@@ -103,7 +104,7 @@
                         method: 'post',
                         url: 'http://139.9.205.50/album/change',
                         data: {
-                            id: 0,
+                            id: albumID,
                             title: value
                         }, 
                         header: {
@@ -119,30 +120,25 @@
                                     message: '快去看看',
                                     type: 'success'
                                 });
+                                this.getAlbumList()
                                 // this.$emit('func', res.data)
                                 break;
                             case 201: 
-                                console.log(value)
-                                this.$notify.error({
-                                    title: '相册名已经被使用',
-                                    message: '请重试'
-                                });
-                                break;
                             case 401: 
                             case 403: 
                             case 404: 
                                 console.log(value)
                                 this.$notify.error({
-                                    title: '相册创建失败',
+                                    title: '相册修改失败',
                                     message: '请重试'
                                 });
-                                this.newAlbumInfo = res.data
+                                // this.newAlbumInfo = res.data
                                 break;
                             case 500:
                                 console.log(value)
                                 this.$notify.error({
-                                    title: '相册创建失败',
-                                    message: '请先登录！'
+                                    title: '相册修改失败',
+                                    message: '重复？'
                                 });
                                 break;
                         }
@@ -162,44 +158,56 @@
             },
             // 删除相册
             deleteAlbum(id) {
-                this.$axios({
-                    method: 'post',
-                    url: 'http://139.9.205.50/album/delete/'+id,
-                    header: {
-                        'Content-Type': 'application/json;charset=UTF-8'
-                    }
-                }).then((res) => {
-                    console.log(res)
-                    var code = res.data.code
-                    switch(code) {
-                        case 200: 
-                            this.$notify({
-                                title: '相册删除成功',
-                                message: '快去看看',
-                                type: 'success'
-                            });
-                            console.log('length'+this.albumList.length)
-                            break;
-                        case 201:
-                        case 401: 
-                        case 403: 
-                        case 404: 
-                            this.$notify.error({
-                                title: '相册删除失败',
-                                message: '请重试'
-                            });
-                            this.newAlbumInfo = res.data
-                            break;
-                        case 500:
-                            this.$notify.error({
-                                title: '相册删除失败',
-                                message: '请先登录！'
-                            });
-                            break;
-                    }
-                }).catch((err) => {
-                    console.log(err)
-                })
+                this.$confirm('此操作将永久删除该相册, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$axios({
+                        method: 'post',
+                        url: 'http://139.9.205.50/album/delete/'+id,
+                        header: {
+                            'Content-Type': 'application/json;charset=UTF-8'
+                        }
+                    }).then((res) => {
+                        console.log(res)
+                        var code = res.data.code
+                        switch(code) {
+                            case 200: 
+                                this.$notify({
+                                    title: '相册删除成功',
+                                    message: '快去看看',
+                                    type: 'success'
+                                });
+                                console.log('length'+this.albumList.length)
+                                this.getAlbumList()
+                                break;
+                            case 201:
+                            case 401: 
+                            case 403: 
+                            case 404: 
+                                this.$notify.error({
+                                    title: '相册删除失败',
+                                    message: '请重试'
+                                });
+                                // this.newAlbumInfo = res.data
+                                break;
+                            case 500:
+                                this.$notify.error({
+                                    title: '相册删除失败',
+                                    message: '请先登录！'
+                                });
+                                break;
+                        }
+                    }).catch((err) => {
+                        console.log(err)
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });          
+                });
             },
             // 判断是否显示删除相册的弹框
             judgeAlbum() {
@@ -210,13 +218,6 @@
                 done()
             },
             ///////////////////////////////////////////////////【mounted执行】
-            // 检查页面加载时相册列表是否为空，空则显示空提示
-            checkData() {
-                console.log('md'+this.albumList.length+'   '+this.albumList)
-                if(this.albumList.length !== 0) {
-                    this.selfEmptyTip = false
-                }
-            },
             // 获取相册列表
             getAlbumList() {
                 this.$axios.get('http://139.9.205.50/album/get')
@@ -230,8 +231,11 @@
                                 message: '快去看看',
                                 type: 'success'
                             });
-                            this.albumList = this.updateAlbumList
-                            console.log('md'+this.albumList.length+'   '+this.albumList)
+                            this.albumList = res.data.data.myself
+                            // console.log('相册长度'+this.albumList.length)
+                            if(this.albumList.length>0) {
+                                this.selfEmptyTip = false
+                            }
                             break;
                         case 201: 
                         case 401: 
@@ -257,38 +261,63 @@
         components: {
             editAlbum
         },
-        props: ['searchKeywords', 'newAlbumInfo', 'updateAlbumList'],
+        props: ['searchKeywords', 'updateAlbumList'],
         mounted() {
             this.getAlbumList()
-            this.checkData()
         }
     }
 </script>
 
 <style lang='css' scoped>
 .startDiv {
-    padding:0;
-    /* background: url(https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg); */
+    padding: 20px 0 20px 20px;
+    background: url(~@/assets/Bg1.png);
     /* background-color: #fff; */
     /* opacity: 0.7; */
     /* height: auto; */
     overflow-x: hidden;
+    /* overflow-y: scroll; */
 }
 .cardContainer {
-    width: 350px;
+    width: 300px;
     margin-top: 50px;
-    margin-left: 70px;
+    margin-left: 100px;
     float: left;
-    box-shadow: 15px 10px 3px rgba(0, 0, 0, 0.2);
+    box-shadow: 20px 20px 8px rgba(0, 0, 0, 0.15);
     transition: all .3s linear;
-    cursor: pointer;
+    /* opacity: 0.9; */
+    /* background-color: green; */
+    /* border: 1px solid yellow; */
+    /* cursor: pointer; */
+    /* border-radius: 20px; */
 }
 .cardContainer:hover {
     transition: all .3s linear;
-    box-shadow: 30px 30px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 5px 5px 13px rgba(0, 0, 0, 0.3);
 }
 .card {
-    background-image: url(~@/assets/Bg15.jpg);
+    /* border: 1px solid #7a735d; */
+    /* border-radius: 20px; */
+    opacity: 1;
+    /* background-color: rgb(156, 209, 245); */
+    /* background-image: url(~@/assets/Bg15.jpg); */
+    /* background-size: 100%; */
+}
+.row {
+    /* background-image: url(~@/assets/Bg16.png); */
+    /* background: linear-gradient(45deg,pink,lightblue); */
+    background-color: rgba(255, 255, 255, 0.5);
+    /* padding: ; */
+    /* border: 1px solid red; */
+    position: absolute;
+    bottom: 0px;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    padding: 20px 20px 50px 20px;
+    overflow-y: scroll;
+    box-shadow: -10px 0px 15px rgba(0, 0, 0, 0.3);
+    /* opacity: 0.8; */
 }
 .el-main {
     line-height: 10px;
@@ -302,8 +331,8 @@
 
 .bottom {
     position: absolute;
-    bottom: 10px;
-    right: 20px;
+    bottom: 15px;
+    right: 25px;
     cursor: pointer;
 }
 .image {
@@ -313,8 +342,22 @@
   cursor: pointer;
 }
 .text {
+    height: 100px;
     text-align: left;
-    padding: 10px;;
+    padding: 50px;
+    cursor: pointer;
+    text-overflow: ellipsis;
+    /* overflow: hidden;
+    display:-webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient:vertical; */
+    /* border: 1px solid #000; */
+    border-bottom-right-radius: 50%;
+    border-top-left-radius: 50%;
+    background-image: url(~@/assets/Bg2.png);
+    /* background-size: 100% ; */
+    /* opacity: 0.8; */
+    /* background-color: #fff; */
 }
 .info {
   line-height: 45px;
@@ -334,6 +377,10 @@
     left: 50%;
     margin-left: -540px;
     margin-top: -80px;
+}
+.el-card, .el-message {
+    border-radius: 0;
+    border: none;
 }
 
 .clearfix:before,

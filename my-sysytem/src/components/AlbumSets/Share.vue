@@ -6,30 +6,33 @@
             去共享相册和大家分享你的美好生活吧！
         </div>
 
-        <!-- <h1>这是 自己的相册 组件</h1> -->
-        <el-row>
-            <div :span="4" v-for="item in search(searchKeywords)" :key="item.id" class="card">
-                <el-card :body-style="{ padding: '0px' }" @click.native="openAlbum(item)">
-                <el-image :src="item.coverImage" class="image" fit="cover"></el-image>
-                <div style="padding: 14px;position:relative;">
-                    <div class="text">
-                        <span style="font-weight:bold;font-size:25px;">{{ item.title }}</span>
+
+        <el-row class="row">
+            <div :span="4" v-for="item in albumList" :key="item.id" class="cardContainer">
+                <el-card :body-style="{ padding: '0px' }" class="card">
+                    <div style="padding: 20px;position:relative;">
+                        <div class="text" @click="openAlbum(item)">
+                            <i class="el-icon-connection" style="font-size:28px;margin-right:10px;"></i>
+                            <span style="font-weight:bold;font-size:25px;">{{ item.title }}</span>
+                        </div>
+                        <div class="bottom">
+                            <el-dropdown>
+                                <i class="el-icon-more" style="font-size:20px;"></i>
+                                <el-dropdown-menu slot="dropdown">
+                                    <el-dropdown-item>分享</el-dropdown-item>
+                                    <el-dropdown-item>共享</el-dropdown-item>
+                                    <el-dropdown-item @click.native="editAlbum(item.id)">编辑</el-dropdown-item>
+                                    <el-dropdown-item style="color:red;" @click.native="deleteAlbum(item.id)">删除</el-dropdown-item>
+                                </el-dropdown-menu>
+                            </el-dropdown>
+                        </div>
+                        
                     </div>
-                    <div class="bottom">
-                        <el-dropdown>
-                            <i class="el-icon-more" style="font-size:17px;"></i>
-                            <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item>分享</el-dropdown-item>
-                                <el-dropdown-item>共享</el-dropdown-item>
-                                <el-dropdown-item>编辑</el-dropdown-item>
-                                <el-dropdown-item style="color:red;">删除</el-dropdown-item>
-                            </el-dropdown-menu>
-                        </el-dropdown>
-                    </div>
-                </div>
                 </el-card>
             </div>
         </el-row>
+
+
     </div>
 </template>
 
@@ -38,78 +41,62 @@
         data(){
             return {
                 currentDate: new Date(),
-                albumList: [    // 这里的数据用axios向后端发请求，请求数据
-                    // {
-                    //     id: 1,
-                    //     coverImage: 'https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg',
-                    //     title: '美好时光',
-                    //     introduction: '记录了我高中青春哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈',
-                    //     createTime: '2019-12-18 Tue',
-                    //     sets: [
-                    //         {
-                    //             uploadTime: '2019-12-15 Tue',
-                    //             desc: '今天去了都江堰，记录一下通过设置 autosize 属性可以使得文本域的高度能够根据文本内容自动进行调整，并且 autosize 还可以设定为一个对象，指定最小行数和最大行数。通过设置 autosize 属性可以使得文本域的高度能够根据文本内容自动进行调整，并且 autosize 还可以设定为一个对象，指定最小行数和最大行数。',
-                    //             photos: [
-                    //                 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg',
-                    //                 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg',
-                    //                 'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg',
-                    //                 'https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg'
-                    //             ]
-                    //         },
-                    //         {
-                    //             uploadTime: '2019-12-18 Tue',
-                    //             desc: '追星之路长漫漫',
-                    //             photos: [
-                    //                 'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg',
-                    //                 'https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg'
-                    //             ]
-                    //         },
-                    //     ]
-                    // }
+                albumList: [
+                    {id:222,title:'4545'}
                 ],
                 shareEmptyTip: true
             }
         },
         methods:{
-            search(searchKeywords) {
-                var newalbumList = this.albumList.filter(item => {
-                    if(item.title.includes(searchKeywords)) {
-                        return item
-                    }
-                })
-                return newalbumList
-            },
+            // search(searchKeywords) {
+            //     var newalbumList = this.albumList.filter(item => {
+            //         if(item.title.includes(searchKeywords)) {
+            //             return item
+            //         }
+            //     })
+            //     return newalbumList
+            // },
             openAlbum(item) {
                 this.$router.push({ name: 'set', params: item })
-            },
-            checkData() {
-                if(this.albumList.length !== 0) {
-                    this.shareEmptyTip = false
-                }
             }
+            // checkData() {
+            //     if(this.albumList.length !== 0) {
+            //         this.shareEmptyTip = false
+            //     }
+            // }
         },
-        props: ['searchKeywords'],
+        // props: ['searchKeywords'],
         mounted() {
-            this.checkData()
+            // this.checkData()
         }
     }
 </script>
 
 <style lang='css' scoped>
 .startDiv {
+    padding: 20px 0 20px 20px;
     /* padding:0 0 50px 70px; */
-    /* background: url('https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg'); */
+    background: url(~@/assets/Bg7.png);
+    overflow-x: hidden;
     /* height: 827px; */
     /* background: url(https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg); */
 }
-.card {
-    width: 350px;
+.cardContainer {
+    width: 300px;
     margin-top: 50px;
-    margin-left: 70px;
+    margin-left: 100px;
     float: left;
-    box-shadow: 15px 10px 3px rgba(0, 0, 0, 0.4);
+    box-shadow: 20px 20px 8px rgba(0, 0, 0, 0.15);
     transition: all .3s linear;
-    
+    /* opacity: 0.9; */
+    /* background-color: green; */
+    /* border: 1px solid yellow; */
+    /* cursor: pointer; */
+    /* border-radius: 20px; */
+}
+.cardContainer:hover {
+    transition: all .3s linear;
+    box-shadow: 5px 5px 13px rgba(0, 0, 0, 0.3);
 }
 .card:hover {
     transition: all .3s linear;
@@ -141,8 +128,22 @@
   cursor: pointer;
 }
 .text {
+    height: 100px;
     text-align: left;
-    padding: 10px;
+    padding: 50px;
+    cursor: pointer;
+    text-overflow: ellipsis;
+    /* overflow: hidden;
+    display:-webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient:vertical; */
+    /* border: 1px solid #000; */
+    border-bottom-right-radius: 50%;
+    border-top-left-radius: 50%;
+    background-image: url(~@/assets/Bg16.png);
+    /* background-size: 100% 50%; */
+    /* opacity: 0.8; */
+    /* background-color: #fff; */
 }
 .info {
   line-height: 45px;
@@ -161,6 +162,22 @@
     left: 50%;
     margin-left: -540px;
     margin-top: -80px;
+}
+.row {
+    /* background-image: url(~@/assets/Bg16.png); */
+    /* background: linear-gradient(45deg,pink,lightblue); */
+    background-color: rgba(255, 255, 255, 0.5);
+    /* padding: ; */
+    /* border: 1px solid red; */
+    position: absolute;
+    bottom: 20px;
+    top: 20px;
+    left: 50px;
+    right: 0px;
+    padding: 20px 20px 50px 20px;
+    overflow-y: scroll;
+    box-shadow: -10px 0px 15px rgba(0, 0, 0, 0.3);
+    /* opacity: 0.8; */
 }
 
 .clearfix:before,

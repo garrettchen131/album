@@ -14,31 +14,34 @@
                 <el-dropdown-item  @click.native="toLogin">退出</el-dropdown-item>
                 </el-dropdown-menu>
             </el-dropdown>
-            <div class="albumBtn">
-                <el-button @click="toSelf" type="danger" round>我的相册</el-button>
-                <el-button @click="toShare" type="danger" round>共享相册</el-button>
+            <!-- <div class="albumBtn">
+                <el-button @click="toSelf" type="danger" round class="alBtn">我<br>的<br>相<br>册</el-button><br>
+                <el-button @click="toShare" type="danger" round class="alBtn">共<br>享<br>相<br>册</el-button>
+            </div> -->
+            <!-- 添加相册按钮 -->
+            <div class="bottomBtn">
+                <el-button @click="toSelf" type="danger" round class="alBtn">我<br>的<br>相<br>册</el-button><br>
+                <el-button @click="toShare" type="danger" round class="alBtn">共<br>享<br>相<br>册</el-button><br>
+                <el-button type="danger" icon="el-icon-plus" circle title="新建相册" @click="addAlbum" v-if="isSelf" class="alBtn alCirBtn"></el-button>
             </div>
-            <div class="searchBtn">
+
+            <!-- <div class="searchBtn">
                 <el-input
                     
                     placeholder="请输入内容"
                     prefix-icon="el-icon-search"
                     v-model="keywords">
                 </el-input>
-            </div>
+            </div> -->
         </div>
 
         <!-- 我的相册 和 共享相册 子组件展示的地方 -->
         <div class="albumView">
-            <router-view :searchKeywords='keywords' :updateAlbumList='albumList' class="showAlbum" @func="getCompMsg"></router-view>
+            <router-view :searchKeywords='keywords' class="showAlbum" ref="child"></router-view>
             <!-- <router-view :searchKeywords='keywords' :newAlbumInfo="newAlbumInfo" class="showAlbum" :func="getCompMsg"></router-view> -->
         </div>
 
-        <!-- 添加相册按钮 -->
-        <div class="bottomBtn">
-            <el-button type="danger" icon="el-icon-plus" circle title="新建相册" @click="addAlbum" v-if="isSelf"></el-button>
-        </div>
-
+        
 
 
         <!-- <el-dialog 
@@ -74,7 +77,7 @@
                 addAlbum_dialogTableVisible: false,
                 changPass_dialogTableVisible: false,
                 keywords: '',   //用于绑定搜索的关键字
-                albumList: []
+                // newAlbum: []
             }
         },
         methods:{
@@ -111,7 +114,6 @@
                         method: 'post',
                         url: 'http://139.9.205.50/album/add',
                         data: {
-                            // id: 0,
                             title: value
                         }, 
                         header: {
@@ -127,20 +129,12 @@
                                     message: '快去上传一组照片试试吧！',
                                     type: 'success'
                                 });
-                                this.albumList.unshift(res.data)
-                                console.log(this.albumList.length+'hhhhh'+this.albumList)
+                                this.$refs.child.getAlbumList()
                                 break;
                             case 201: 
-                                console.log(value)
-                                this.$notify.error({
-                                    title: '相册名已经被使用',
-                                    message: '请重试'
-                                });
-                                break;
                             case 401: 
                             case 403: 
                             case 404: 
-                                console.log(value)
                                 this.$notify.error({
                                     title: '相册创建失败',
                                     message: '请重试'
@@ -148,10 +142,9 @@
                                 this.newAlbumInfo = res.data
                                 break;
                             case 500:
-                                console.log(value)
                                 this.$notify.error({
                                     title: '相册创建失败',
-                                    message: '请先登录！'
+                                    message: '相册已经存在,请勿重复添加'
                                 });
                                 break;
                         }
@@ -207,12 +200,6 @@
                         message: '已取消删除'
                     });          
                 });
-            },
-            // createAlbum(formInfo) {
-            //     this.newAlbumInfo = formInfo
-            // },
-            getCompMsg(albumEditedInfo) {
-
             }
         },
         components: {
@@ -239,13 +226,14 @@
     background: url(https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg);
 } */
 .header {
-    height: 60px;
-    width: 100%;
-    background-color: pink;
+    height: 100%;
+    width: 90px;
+    /* background-color: pink; */
     position: fixed;
     top: 0;
+    right: 0;
     z-index: 1;
-    box-shadow: 2px 5px 5px rgba(0, 0, 0, 0.2);
+    /* box-shadow: -9px 0px 15px rgba(0, 0, 0, 0.2); */
 }
 .el-dropdown {
     position: absolute;
@@ -255,7 +243,7 @@
 .el-dropdown .user {
     /* font-size: 18px; */
     cursor: pointer;
-    margin-right: 30px;
+    margin-right: 20px;
 }
 .bottomBtn {
     position: fixed;
@@ -268,8 +256,8 @@
 }
 .albumBtn {
     position: absolute;
-    top: 10px;
-    left: 20px;
+    top: 80px;
+    right: 15px;
 }
 .searchBtn {
     position: absolute;
@@ -280,15 +268,31 @@
 }
 .showAlbum {
     position: absolute;
-    top: 60px;
-    left: 100px;
-    right: 100px;
+    top: 0px;
+    left: 0px;
+    right: 90px;
     bottom: 0px;
     /* border: 1px solid #000; */
     /* border-radius: 20px; */
     /* border-top-left-radius: 20px; */
-    box-shadow: 10px 20px 40px rgba(0, 0, 0, 0.2);
+    /* box-shadow: 10px 20px 40px rgba(0, 0, 0, 0.2); */
     /* opacity: 0.8; */
-    overflow-y: scroll;
+    /* overflow-y: scroll; */
+}
+.alBtn {
+    width: 50px;
+    height: 150px;
+    font-size: 18px;
+    font-family: 幼圆;
+    line-height: 25px;
+    margin-top: 20px;
+}
+.alCirBtn {
+    width: 50px;
+    height: 50px;
+}
+.el-button.is-round {
+    padding: 0;
+    border-radius: 5px;
 }
 </style>

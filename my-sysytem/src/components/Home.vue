@@ -1,5 +1,6 @@
 <template>
     <div class="container">
+
         <div class="link" @click="toLR">
             <span style="text-decoration: none;font-size:20px;">{{ swith?'去注册':'去登录' }}</span>
             <i class="el-icon-s-promotion" style="font-size:70px;"></i>
@@ -8,6 +9,7 @@
         <transition mode="out-in">
             <router-view class="view"></router-view>
         </transition>
+
     </div>
 </template>
 
@@ -47,11 +49,11 @@
 }
 .link {
     position: absolute;
-    left: 50%;
+    left: 47%;
     top: 50px;
     margin-left: -67.5px;
     cursor: pointer;
-    color: #7a735d;
+    color: #fff;
     transition: all .3s linear;
     text-shadow: 20px 20px 10px rgba(0,0,0,0.2);
 }
@@ -62,12 +64,20 @@
     transition: all .3s linear;
 }
 .container {
+    position: absolute;
     height: 100%;
-    background-image: url(../assets/Bg15.jpg);
+    width: 100%;
+    /* margin-left: 6px; */
+    background-image: url(~@/assets/Bg17.png);
+    background-repeat: no-repeat;
+    /* background-size: 100% 100%; */
+    /* border: 1px solid #000; */
+    /* overflow: hidden; */
 }
 .view {
     position: absolute;
-    left: 50%;
+    /* left: 73%; */
+    right: 10%;
     margin-left: -350px;
     top: 160px;
 }
