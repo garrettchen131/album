@@ -76,7 +76,7 @@
 .startDiv {
     padding: 20px 0 20px 20px;
     /* padding:0 0 50px 70px; */
-    background: url(~@/assets/Bg7.png);
+    background: url(~@/assets/Bg5.png);
     overflow-x: hidden;
     /* height: 827px; */
     /* background: url(https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg); */
@@ -166,7 +166,7 @@
 .row {
     /* background-image: url(~@/assets/Bg16.png); */
     /* background: linear-gradient(45deg,pink,lightblue); */
-    background-color: rgba(255, 255, 255, 0.5);
+    /* background-color: rgba(255, 255, 255, 0.5); */
     /* padding: ; */
     /* border: 1px solid red; */
     position: absolute;
@@ -176,7 +176,7 @@
     right: 0px;
     padding: 20px 20px 50px 20px;
     overflow-y: scroll;
-    box-shadow: -10px 0px 15px rgba(0, 0, 0, 0.3);
+    /* box-shadow: -10px 0px 15px rgba(0, 0, 0, 0.3); */
     /* opacity: 0.8; */
 }
 

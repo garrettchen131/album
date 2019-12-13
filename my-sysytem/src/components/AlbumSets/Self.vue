@@ -271,7 +271,9 @@
 <style lang='css' scoped>
 .startDiv {
     padding: 20px 0 20px 20px;
-    background: url(~@/assets/Bg1.png);
+    background-image: url(~@/assets/Bg13.png);
+    background-repeat: no-repeat;
+    background-size: 100%;
     /* background-color: #fff; */
     /* opacity: 0.7; */
     /* height: auto; */
@@ -283,7 +285,7 @@
     margin-top: 50px;
     margin-left: 100px;
     float: left;
-    box-shadow: 20px 20px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 20px 20px 8px rgba(0, 0, 0, 0.25);
     transition: all .3s linear;
     /* opacity: 0.9; */
     /* background-color: green; */
@@ -293,20 +295,20 @@
 }
 .cardContainer:hover {
     transition: all .3s linear;
-    box-shadow: 5px 5px 13px rgba(0, 0, 0, 0.3);
+    box-shadow: 5px 5px 13px rgba(0, 0, 0, 0.4);
 }
 .card {
     /* border: 1px solid #7a735d; */
     /* border-radius: 20px; */
     opacity: 1;
     /* background-color: rgb(156, 209, 245); */
-    /* background-image: url(~@/assets/Bg15.jpg); */
+    /* background-image: url(~@/assets/Bg10.png); */
     /* background-size: 100%; */
 }
 .row {
     /* background-image: url(~@/assets/Bg16.png); */
     /* background: linear-gradient(45deg,pink,lightblue); */
-    background-color: rgba(255, 255, 255, 0.5);
+    /* background-color: rgba(255, 255, 255, 0.5); */
     /* padding: ; */
     /* border: 1px solid red; */
     position: absolute;
@@ -331,7 +333,7 @@
 
 .bottom {
     position: absolute;
-    bottom: 15px;
+    top: 15px;
     right: 25px;
     cursor: pointer;
 }
@@ -344,7 +346,7 @@
 .text {
     height: 100px;
     text-align: left;
-    padding: 50px;
+    padding: 40px;
     cursor: pointer;
     text-overflow: ellipsis;
     /* overflow: hidden;
@@ -352,10 +354,10 @@
     -webkit-line-clamp: 1;
     -webkit-box-orient:vertical; */
     /* border: 1px solid #000; */
-    border-bottom-right-radius: 50%;
-    border-top-left-radius: 50%;
-    background-image: url(~@/assets/Bg2.png);
-    /* background-size: 100% ; */
+    border-top-right-radius: 45%;
+    /* border-top-left-radius: 50%; */
+    background-image: url(~@/assets/Bg9.png);
+    background-size: 100% ;
     /* opacity: 0.8; */
     /* background-color: #fff; */
 }

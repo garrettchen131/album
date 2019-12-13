@@ -233,6 +233,9 @@
     top: 0;
     right: 0;
     z-index: 1;
+    background-image: url(~@/assets/Bg12.png);
+    /* background-size: 100%;
+    background-repeat: no-repeat; */
     /* box-shadow: -9px 0px 15px rgba(0, 0, 0, 0.2); */
 }
 .el-dropdown {
