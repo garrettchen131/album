@@ -14,7 +14,7 @@ export default {
 html,body {
   margin: 0;
   padding: 0;
-  overflow-y:scroll;
+  overflow-y: scroll;
   overflow-x: hidden;
   /* overflow-y: invisible; */
   /* height: 100%; */
@@ -32,6 +32,10 @@ html,body {
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
 }
+
+/* body::-webkit-scrollbar {
+    display: none;
+} */
 
 ::-webkit-scrollbar {
     width: 6px;
@@ -56,11 +60,17 @@ html,body {
   margin-top: 70px;
 }
 .el-drawer__body {
-  padding: 50px;
+  padding: 50px 50px 75px 50px;
   line-height: 35px;
   font-size: 20px;
   overflow-y: scroll;
   background-color: rgb(226, 244, 250);
+}
+.el-drawer__body {
+  overflow: hidden;
+}
+.el-textarea__inner {
+  height: 400px;
 }
 
 /* detail.vue */

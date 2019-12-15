@@ -41,9 +41,7 @@
         data(){
             return {
                 currentDate: new Date(),
-                albumList: [
-                    {id:222,title:'4545'}
-                ],
+                albumList: [],
                 shareEmptyTip: true
             }
         },

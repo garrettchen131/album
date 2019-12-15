@@ -2,7 +2,7 @@
     <div class="setsContainer" ref="setsContainer">
 
         <div class="selfEmptyTip" v-if="selfEmptyTip">
-            你的相册集好空呢~😊快上传一组吧<br>
+            你的相册集好空呢~😊快上传一组吧{{this.albumID}}<br>
         </div>
 
         <el-button-group class="pageHeaderBtn">
@@ -13,22 +13,24 @@
 <!-- 二方案 -->
         <div class="block setsTimeline">
             <el-timeline>
-                <div  v-for="set in albumSets" :key="set.uploadTime">
-                     <el-timeline-item :timestamp="set.uploadTime" placement="top">
-                        <!-- <div class="el-timeline-item__tail"></div> -->
+                <div  v-for="set in albumSets" :key="set.id">
+                     <el-timeline-item :timestamp="set.title" placement="top">
                         <el-card class="setCard">
-                            <p class="setDesc" @click="showAllDesc(set.desc)">{{ set.desc }}</p>
-                            <div v-for="photo in set.photos.slice(0,3)" :key="photo" @click="toPreview(set)">
+                            <p class="setDesc" @click="showAllDesc(set)">{{ set.desc }}</p>
+                            <div v-for="photo in 3" :key="photo" @click="toPreview(set)">
                                 <div class="imgContainer">
                                     <el-image
                                         class="setPhoto"
-                                        :src="photo"
+                                        
                                         fit="contain">
                                     </el-image>
                                 </div>
                             </div>
                             <el-tooltip class="item" effect="dark" content="上传图片" placement="right-start">
                                 <el-button type="danger" icon="el-icon-upload2" circle title="上传图片" @click="uploadPhotos" class="setting"></el-button>
+                            </el-tooltip>
+                            <el-tooltip class="item" effect="dark" content="删除相册集" placement="right-start">
+                                <i class="el-icon-close deleteAlbumSetBtn" @click="deleteAlbumSet(set.id)"></i>
                             </el-tooltip>
                         </el-card>
                     </el-timeline-item>
@@ -37,7 +39,15 @@
         </div>
 
 
-        <el-tooltip class="item" effect="dark" content="添加相册集" placement="top-end">
+        <el-button 
+            type="danger" 
+            class="addSet"
+            icon="el-icon-plus" 
+            circle title="新建相册集" 
+            @click="createAlbumSet()">
+         </el-button>
+
+        <!-- <el-tooltip class="item" effect="dark" content="添加相册集" placement="top-end">
             <el-button 
                 class="addSet"
                 type="primary" 
@@ -45,7 +55,7 @@
                 circle title="添加相册集" 
                 @click="uploadPhotos">
             </el-button>
-        </el-tooltip>
+        </el-tooltip> -->
 
 
         <el-dialog 
@@ -62,7 +72,28 @@
         <el-drawer
             :visible.sync="drawer"
             :with-header="false">
-            <span>{{detailDesc}}</span>
+            <h3 v-if="editDesc">{{setInfo.setTitle}}</h3>
+            <span v-if="editDesc">{{setInfo.detailDesc}}</span>
+
+            <el-form ref="form" label-width="100px" v-if="!editDesc">
+                <el-form-item label="相册集名称">
+                    <el-input v-model="setInfo.setTitle"></el-input>
+                </el-form-item>
+                <el-form-item label="相册集描述">
+                    <!-- <el-input type="textarea" v-model="detailDesc" v-if="!editDesc" class="inputDesc"></el-input> -->
+                    <el-input type="textarea" v-model="setInfo.detailDesc"></el-input>
+                </el-form-item>
+            </el-form>
+
+            <div class="editDescBtn">
+                <el-tooltip class="item" effect="dark" content="编辑信息" placement="top-start">
+                    <el-button type="primary" icon="el-icon-edit" circle v-if="editDesc" @click="toEditDesc"></el-button>
+                </el-tooltip>
+                <el-tooltip class="item" effect="dark" content="保存编辑" placement="top-start">
+                    <el-button type="success" icon="el-icon-check" circle v-if="!editDesc" @click="toSaveDesc(setInfo.setID)"></el-button>
+                </el-tooltip>
+                <el-button type="danger" icon="el-icon-close" circle v-if="!editDesc" @click="toCancelDesc"></el-button>
+            </div>
         </el-drawer>
 
 
@@ -76,15 +107,23 @@
     export default {
         data(){
             return {
+                albumID: this.$route.params.id,
                 albumTitle: '《'+this.$route.params.title+'》',
-                albumCreateTime: this.$route.params.createTime,
-                albumCoverImage: this.$route.params.coverImage,
-                albumSets: this.$route.params.sets,
+                // albumCreateTime: this.$route.params.createTime,
+                // albumCoverImage: this.$route.params.coverImage,
+                albumSets: [],
                 drawer: false,
-                detailDesc: '',
+                setInfo: {
+                    setID: '',
+                    detailDesc: '',
+                    setTitle: '',
+                },
+                oldDesc: '',
                 activeNames: ['1'],
                 uploadPhotos_dialogTableVisible: false,
-                selfEmptyTip: true
+                selfEmptyTip: true,
+                editDesc: true,
+                visible: false,
             }
         },
         methods:{
@@ -103,21 +142,230 @@
             uploadPhotos() {
                 this.uploadPhotos_dialogTableVisible = true
             },
-            showAllDesc(msg) {
+            showAllDesc(set) {
                 this.drawer = true
-                this.detailDesc = msg
+                this.setInfo.detailDesc = set.desc
+                this.setInfo.setTitle = set.title
+                this.setInfo.setID = set.id
             },
-            checkIsHavedSet() {
-                if(this.albumSets.length !== 0) {
-                    this.selfEmptyTip = false
-                }
+            createAlbumSet() {
+                this.$confirm('是否要在该相册中新建一个相册集?', '新建相册集', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'success'
+                }).then(() => {
+                    this.$axios({
+                        method: 'post',
+                        url: 'http://139.9.205.50/folder/add/'+this.albumID,
+                        header: {
+                            'Content-Type': 'application/json;charset=UTF-8'
+                        }
+                    }).then((res) => {
+                        console.log(res)
+                        var code = res.data.code
+                        switch(code) {
+                            case 200: 
+                                this.$notify({
+                                    title: '相册集创建成功',
+                                    message: '快去上传一组照片试试吧！',
+                                    type: 'success'
+                                });
+                                // this.albumSets = res.data.data
+                                this.getAlbumSets()
+                                break;
+                            case 201: 
+                            case 401: 
+                            case 403: 
+                            case 404: 
+                                this.$notify.error({
+                                    title: '相册集创建失败',
+                                    message: '请重试'
+                                });
+                                // this.newAlbumInfo = res.data
+                                break;
+                            case 500:
+                                this.$notify.error({
+                                    title: '相册集创建失败',
+                                    message: '500'
+                                });
+                                break;
+                        }
+                    }).catch((err) => {
+                        console.log(err)
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消创建'
+                    });          
+                });
+            },
+            toEditDesc() {
+                this.editDesc = false
+                this.oldDesc = this.detailDesc
+            },
+            toSaveDesc(setID) {
+                this.$axios({
+                    method: 'post',
+                    url: 'http://139.9.205.50/folder/change',
+                    data: {
+                        id: setID,
+                        title: this.setTitle,
+                        desc: this.detailDesc
+                    },
+                    header: {
+                        'Content-Type': 'application/json;charset=UTF-8'
+                    }
+                }).then((res) => {
+                    console.log(res)
+                    var code = res.data.code
+                    switch(code) {
+                        case 200: 
+                            this.$notify({
+                                title: '相册集简介修改成功',
+                                message: '',
+                                type: 'success'
+                            });
+                            // this.editDesc = false
+                            this.toCancelDesc()
+                            this.getAlbumSets()
+                            break;
+                        case 201: 
+                        case 401: 
+                        case 403: 
+                        case 404: 
+                            this.$notify.error({
+                                title: '相册集简介修改失败',
+                                message: '请重试'
+                            });
+                            this.toCancelDesc()
+                            // this.editDesc = false
+                            // this.newAlbumInfo = res.data
+                            break;
+                        case 500:
+                            this.$notify.error({
+                                title: '相册集简介修改失败',
+                                message: '500'
+                            });
+                            this.toCancelDesc()
+                            // this.editDesc = false
+                            break;
+                    }
+                }).catch((err) => {
+                    console.log(err)
+                })
+            },
+            toCancelDesc() {
+                this.editDesc = true
+                this.detailDesc = this.oldDesc
+                // this.$notify.error({
+                //     title: '退出编辑',
+                //     message: ''
+                // });
+            },
+            deleteAlbumSet(setID) {
+                this.$confirm('此操作将永久删除该相册集, 是否继续?', '删除相册集', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$axios({
+                        method: 'post',
+                        url: 'http://139.9.205.50/folder/delete/'+setID,
+                        header: {
+                            'Content-Type': 'application/json;charset=UTF-8'
+                        }
+                    }).then((res) => {
+                        console.log(res)
+                        var code = res.data.code
+                        switch(code) {
+                            case 200: 
+                                this.$notify({
+                                    title: '相册集删除成功',
+                                    message: '',
+                                    type: 'success'
+                                });
+                                // this.albumSets = res.data.data
+                                this.getAlbumSets()
+                                break;
+                            case 201: 
+                            case 401: 
+                            case 403: 
+                            case 404: 
+                                this.$notify.error({
+                                    title: '相册集删除失败',
+                                    message: '请重试'
+                                });
+                                // this.newAlbumInfo = res.data
+                                break;
+                            case 500:
+                                this.$notify.error({
+                                    title: '相册集删除失败',
+                                    message: '500'
+                                });
+                                break;
+                        }
+                    }).catch((err) => {
+                        console.log(err)
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });          
+                });
+            },
+            ///////////////////////////////////////////////////【mounted执行】
+            // 获取相册集列表
+            getAlbumSets() {
+                this.$axios.get('http://139.9.205.50/folder/get/'+this.albumID)
+                .then((res) => {
+                    console.log(res)
+                    var code = res.data.code
+                    switch(code) {
+                        case 200: 
+                            this.$notify({
+                                title: '相册集获取成功',
+                                message: '快去看看',
+                                type: 'success'
+                            });
+                            this.albumSets = res.data.data
+                            if(this.albumSets.length>0) {
+                                this.selfEmptyTip = false
+                            }
+                            break;
+                        case 201: 
+                        case 401: 
+                        case 403: 
+                        case 404: 
+                            this.$notify.error({
+                                title: '相册集创建失败',
+                                message: '请重试'
+                            });
+                            break;
+                        case 500:
+                            this.$notify.error({
+                                title: '500',
+                                message: '请先登录！'
+                            });
+                            break;
+                    }
+                }).catch((err) => {
+                    console.log(err)
+                })
             }
+            // checkIsHavedSet() {
+            //     if(this.albumSets.length !== 0) {
+            //         this.selfEmptyTip = false
+            //     }
+            // }
         },
         components: {
             addPhotos
         },
         mounted() {
             // this.checkIsHavedSet()
+            this.getAlbumSets()
         }
     }
 </script>
@@ -142,22 +390,29 @@
     margin-left: -404.5px;
 }
 .setsContainer {
-    /* width: 1300px; */
+    /* position: absolute; */
+    width: 100%;
     /* border: 1px solid #000; */
-    height: auto;
-    /* overflow: scroll; */
-    /* background-image: url(~@/assets/Bg6.jpg); */
-    /* background-repeat: no-repeat; */
-    /* background-size: 100% 100%; */
+    /* height: auto; */
+    /* overflow-y: scroll; */
+    background: linear-gradient(90deg,pink,lightblue);
+    /* background-image: url(~@/assets/Bg13.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%; */
+    overflow: hidden;
 }
 .setsTimeline {
-    position: absolute;
+    /* position: absolute;
     left: 300px;
     right: 300px;
-    top: 50px;
-    /* border: 1px solid #000; */
-    box-shadow: 0px 20px 30px rgba(0, 0, 0, 0.15);
-    margin: 0 auto;
+    top: 50px; */
+    margin-left: 300px;
+    margin-right: 300px;
+    /* margin-top: -10px; */
+    overflow: hidden;
+    /* border: 1px solid rgba(0, 0, 0, 0); */
+    box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.25);
+    /* margin: 0 auto; */
 }
 .setting {
     position: absolute;
@@ -224,6 +479,17 @@
     position: fixed;
     bottom: 20px;
     right: 30px;
+}
+.editDescBtn {
+    position: absolute;
+    bottom: 15px;
+    left: 20px;
+}
+.deleteAlbumSetBtn {
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    cursor: pointer;
 }
 
 .clearfix:before,
