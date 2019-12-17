@@ -105,7 +105,7 @@
                         // alert('submit!');
                         this.$axios({
                             method: 'post',
-                            url: 'http://139.9.205.50/user/login',
+                            url: 'http://192.168.31.49/user/login',
                             withCredentials : true,
                             data: {
                                 mail: this.ruleForm.email,
@@ -126,7 +126,8 @@
                                         message: 'Welcom to your Photo-Management-system',
                                         type: 'success'
                                     });
-                                    this.$router.push('/main/self')
+                                    // this.$router.push('/main/self')
+                                    this.$router.push({ name: 'self', params: res.data.data })
                                     break;
                                 case 201: 
                                 case 401: 

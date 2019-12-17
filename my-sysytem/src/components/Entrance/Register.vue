@@ -55,10 +55,17 @@
                 }, 1000);
             };
             var checkName = (rule, value, callback) => {
+                var inputPattern = /[a-zA-Z0-9]{5,12}/
                 if (!value) {
                     return callback(new Error('用户名不能为空'));
                 } else {
-                    callback();
+                    setTimeout(() => {
+                        if (!inputPattern.test(value)) {
+                            callback(new Error('请输入合法的名称，数字或者字母5-12位'));
+                        } else {
+                            callback();
+                        }
+                    }, 1000);
                 }
             };
             var checkPhone = (rule, value, callback) => {
@@ -77,8 +84,8 @@
             var validatePass = (rule, value, callback) => {
                 if (value === '') {
                     return callback(new Error('请输入密码'));
-                } else if (value.length < 6) {
-                    callback(new Error('密码不能少于6位，请重新输入'));
+                } else if (value.length < 8 || value.length > 16) {
+                    callback(new Error('密码长度在8-16位，请重新输入'));
                 } else {
                     if (this.ruleForm.checkPass !== '') {
                         this.$refs.ruleForm.validateField('checkPass');
@@ -151,7 +158,7 @@
 
                         this.$axios({
                             method: 'post',
-                            url: 'http://139.9.205.50/user/register',
+                            url: 'http://192.168.31.49/user/register',
                             data: {
                                 mail: this.ruleForm.mail,
                                 name: this.ruleForm.name,

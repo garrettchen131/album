@@ -71,9 +71,10 @@
                 albumList: [],  //相册列表
                 deleteAlbum_dialogVisible: false,   //是否打开删除相册的确认框，默认为false（不打开）
                 // editAlbum_dialogTableVisible: false,
-                selfEmptyTip: true  //是否显示相册为空的提示，默认为true（提示）
+                selfEmptyTip: true,  //是否显示相册为空的提示，默认为true（提示）
                 // loginID: this.$route.params.id
                 // albumEditedTitle: ''
+                loginInfo: this.$route.params
             }
         },
         methods:{
@@ -102,7 +103,7 @@
                 }).then(({ value }) => {
                     this.$axios({
                         method: 'post',
-                        url: 'http://139.9.205.50/album/change',
+                        url: 'http://192.168.31.49/album/change',
                         data: {
                             id: albumID,
                             title: value
@@ -165,7 +166,7 @@
                 }).then(() => {
                     this.$axios({
                         method: 'post',
-                        url: 'http://139.9.205.50/album/delete/'+id,
+                        url: 'http://192.168.31.49/album/delete/'+id,
                         header: {
                             'Content-Type': 'application/json;charset=UTF-8'
                         }
@@ -220,7 +221,7 @@
             ///////////////////////////////////////////////////【mounted执行】
             // 获取相册列表
             getAlbumList() {
-                this.$axios.get('http://139.9.205.50/album/get')
+                this.$axios.get('http://192.168.31.49/album/get')
                 .then((res) => {
                     console.log(res)
                     var code = res.data.code
@@ -264,6 +265,7 @@
         props: ['searchKeywords', 'updateAlbumList'],
         mounted() {
             this.getAlbumList()
+            this.$emit('func', this.loginInfo)
         }
     }
 </script>

@@ -17,7 +17,7 @@
                      <el-timeline-item :timestamp="set.title" placement="top">
                         <el-card class="setCard">
                             <p class="setDesc" @click="showAllDesc(set)">{{ set.desc }}</p>
-                            <div v-for="photo in 3" :key="photo" @click="toPreview(set)">
+                            <div v-for="photo in 3" :key="photo" @click="toPreview(set, this.albumID)">
                                 <div class="imgContainer">
                                     <el-image
                                         class="setPhoto"
@@ -75,22 +75,31 @@
             <h3 v-if="editDesc">{{setInfo.setTitle}}</h3>
             <span v-if="editDesc">{{setInfo.detailDesc}}</span>
 
-            <el-form ref="form" label-width="100px" v-if="!editDesc">
+            <!-- <el-form ref="form" label-width="100px" v-if="!editDesc">
                 <el-form-item label="相册集名称">
                     <el-input v-model="setInfo.setTitle"></el-input>
                 </el-form-item>
                 <el-form-item label="相册集描述">
-                    <!-- <el-input type="textarea" v-model="detailDesc" v-if="!editDesc" class="inputDesc"></el-input> -->
+                    <el-input type="textarea" v-model="setInfo.detailDesc"></el-input>
+                </el-form-item>
+            </el-form> -->
+
+            <el-form :model="setInfo" ref="setInfo" label-width="100px" v-if="!editDesc">
+                <el-form-item label="相册集名称" prop="title">
+                    <el-input v-model="setInfo.setTitle"></el-input>
+                </el-form-item>
+                <el-form-item label="相册集描述" prop="desc">
                     <el-input type="textarea" v-model="setInfo.detailDesc"></el-input>
                 </el-form-item>
             </el-form>
+
 
             <div class="editDescBtn">
                 <el-tooltip class="item" effect="dark" content="编辑信息" placement="top-start">
                     <el-button type="primary" icon="el-icon-edit" circle v-if="editDesc" @click="toEditDesc"></el-button>
                 </el-tooltip>
                 <el-tooltip class="item" effect="dark" content="保存编辑" placement="top-start">
-                    <el-button type="success" icon="el-icon-check" circle v-if="!editDesc" @click="toSaveDesc(setInfo.setID)"></el-button>
+                    <el-button type="success" icon="el-icon-check" circle v-if="!editDesc" @click="toSaveDesc"></el-button>
                 </el-tooltip>
                 <el-button type="danger" icon="el-icon-close" circle v-if="!editDesc" @click="toCancelDesc"></el-button>
             </div>
@@ -136,8 +145,8 @@
             handleChange(val) {
                 console.log(val);
             },
-            toPreview(set) {
-                this.$router.push({ name: 'album', params: set })
+            toPreview(set, albumID) {
+                this.$router.push({ name: 'album', params: { set, albumID} })
             },
             uploadPhotos() {
                 this.uploadPhotos_dialogTableVisible = true
@@ -156,7 +165,7 @@
                 }).then(() => {
                     this.$axios({
                         method: 'post',
-                        url: 'http://139.9.205.50/folder/add/'+this.albumID,
+                        url: 'http://192.168.31.49/folder/add/'+this.albumID,
                         header: {
                             'Content-Type': 'application/json;charset=UTF-8'
                         }
@@ -176,7 +185,7 @@
                             case 201: 
                             case 401: 
                             case 403: 
-                            case 404: 
+                            case 404:  
                                 this.$notify.error({
                                     title: '相册集创建失败',
                                     message: '请重试'
@@ -204,64 +213,68 @@
                 this.editDesc = false
                 this.oldDesc = this.detailDesc
             },
-            toSaveDesc(setID) {
-                this.$axios({
-                    method: 'post',
-                    url: 'http://139.9.205.50/folder/change',
-                    data: {
-                        id: setID,
-                        title: this.setTitle,
-                        desc: this.detailDesc
-                    },
-                    header: {
-                        'Content-Type': 'application/json;charset=UTF-8'
-                    }
-                }).then((res) => {
-                    console.log(res)
-                    var code = res.data.code
-                    switch(code) {
-                        case 200: 
-                            this.$notify({
-                                title: '相册集简介修改成功',
-                                message: '',
-                                type: 'success'
-                            });
-                            // this.editDesc = false
-                            this.toCancelDesc()
-                            this.getAlbumSets()
-                            break;
-                        case 201: 
-                        case 401: 
-                        case 403: 
-                        case 404: 
-                            this.$notify.error({
-                                title: '相册集简介修改失败',
-                                message: '请重试'
-                            });
-                            this.toCancelDesc()
-                            // this.editDesc = false
-                            // this.newAlbumInfo = res.data
-                            break;
-                        case 500:
-                            this.$notify.error({
-                                title: '相册集简介修改失败',
-                                message: '500'
-                            });
-                            this.toCancelDesc()
-                            // this.editDesc = false
-                            break;
-                    }
-                }).catch((err) => {
-                    console.log(err)
-                })
+            toSaveDesc() {
+                // console.log(this.setInfo.setID+"  "+this.setInfo.setTitle+"  "+this.setInfo.detailDesc)
+                if(this.setInfo.setTitle === "" || this.setInfo.detailDesc === "") {
+                    this.$notify.error({
+                        title: '相册集名称和相册集描述不能为空',
+                        message: '请填写'
+                    });
+                } else {
+                    this.$axios({
+                        method: 'post',
+                        url: 'http://192.168.31.49/folder/change',
+                        data: {
+                            id: this.setInfo.setID,
+                            title: this.setInfo.setTitle,
+                            desc: this.setInfo.detailDesc
+                        },
+                        header: {
+                            'Content-Type': 'application/json;charset=UTF-8'
+                        }
+                    }).then((res) => {
+                        console.log(res)
+                        var code = res.data.code
+                        switch(code) {
+                            case 200: 
+                                this.$notify({
+                                    title: '相册集简介修改成功',
+                                    message: '',
+                                    type: 'success'
+                                });
+                                // this.editDesc = false
+                                this.toCancelDesc()
+                                this.getAlbumSets()
+                                break;
+                            case 201: 
+                            case 401: 
+                            case 403: 
+                            case 404: 
+                                this.$notify.error({
+                                    title: '相册集简介修改失败',
+                                    message: '请重试'
+                                });
+                                this.toCancelDesc()
+                                // this.editDesc = false
+                                // this.newAlbumInfo = res.data
+                                break;
+                            case 500:
+                                this.$notify.error({
+                                    title: '相册集简介修改失败',
+                                    message: '500'
+                                });
+                                this.toCancelDesc()
+                                // this.editDesc = false
+                                break;
+                        }
+                    }).catch((err) => {
+                        console.log(err)
+                    })
+                }
             },
             toCancelDesc() {
                 this.editDesc = true
                 this.detailDesc = this.oldDesc
-                // this.$notify.error({
-                //     title: '退出编辑',
-                //     message: ''
-                // });
             },
             deleteAlbumSet(setID) {
                 this.$confirm('此操作将永久删除该相册集, 是否继续?', '删除相册集', {
@@ -271,7 +284,7 @@
                 }).then(() => {
                     this.$axios({
                         method: 'post',
-                        url: 'http://139.9.205.50/folder/delete/'+setID,
+                        url: 'http://192.168.31.49/folder/delete/'+setID,
                         header: {
                             'Content-Type': 'application/json;charset=UTF-8'
                         }
@@ -318,7 +331,7 @@
             ///////////////////////////////////////////////////【mounted执行】
             // 获取相册集列表
             getAlbumSets() {
-                this.$axios.get('http://139.9.205.50/folder/get/'+this.albumID)
+                this.$axios.get('http://192.168.31.49/folder/get/'+this.albumID)
                 .then((res) => {
                     console.log(res)
                     var code = res.data.code
@@ -390,26 +403,28 @@
     margin-left: -404.5px;
 }
 .setsContainer {
-    /* position: absolute; */
+    position: absolute;
     width: 100%;
+    height: 200%;
     /* border: 1px solid #000; */
     /* height: auto; */
     /* overflow-y: scroll; */
-    background: linear-gradient(90deg,pink,lightblue);
+    background: linear-gradient(-90deg,pink,lightblue);
     /* background-image: url(~@/assets/Bg13.png);
     background-repeat: no-repeat;
     background-size: 100% 100%; */
     overflow: hidden;
 }
 .setsTimeline {
-    /* position: absolute;
+    position: absolute;
     left: 300px;
     right: 300px;
-    top: 50px; */
-    margin-left: 300px;
-    margin-right: 300px;
+    top: 0px;
+    bottom: 0px;
+    /* margin-left: 300px; */
+    /* margin-right: 300px; */
     /* margin-top: -10px; */
-    overflow: hidden;
+    overflow-y: scroll;
     /* border: 1px solid rgba(0, 0, 0, 0); */
     box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.25);
     /* margin: 0 auto; */

@@ -10,8 +10,7 @@
                 <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="toChangePass">修改密码</el-dropdown-item>
                 <el-dropdown-item @click.native="toAboutUs">关于我们</el-dropdown-item>
-                <el-dropdown-item @click.native="toDestroy">注销账户</el-dropdown-item>
-                <el-dropdown-item  @click.native="toLogin">退出</el-dropdown-item>
+                <el-dropdown-item @click.native="toLogout">退出</el-dropdown-item>
                 </el-dropdown-menu>
             </el-dropdown>
             <!-- <div class="albumBtn">
@@ -37,7 +36,7 @@
 
         <!-- 我的相册 和 共享相册 子组件展示的地方 -->
         <div class="albumView">
-            <router-view :searchKeywords='keywords' class="showAlbum" ref="child"></router-view>
+            <router-view :searchKeywords='keywords' class="showAlbum" ref="child" @func="getCompMsg"></router-view>
             <!-- <router-view :searchKeywords='keywords' :newAlbumInfo="newAlbumInfo" class="showAlbum" :func="getCompMsg"></router-view> -->
         </div>
 
@@ -78,9 +77,13 @@
                 changPass_dialogTableVisible: false,
                 keywords: '',   //用于绑定搜索的关键字
                 // newAlbum: []
+                loginInfo: {}
             }
         },
         methods:{
+            getCompMsg(msg) {
+                this.loginInfo = msg
+            },
             toSelf() {
                 this.$router.push('/main/self')
                 // this.isSelf = true
@@ -88,9 +91,6 @@
             toShare() {
                 this.$router.push('/main/share')
                 // this.isSelf = false
-            },
-            toLogin() {
-                this.$router.push('/home/login')
             },
             toAboutUs() {
                 this.$alert('你好，我是🥦🐔陈香伶', '关于我', {
@@ -112,7 +112,7 @@
                 }).then(({ value }) => {
                     this.$axios({
                         method: 'post',
-                        url: 'http://139.9.205.50/album/add',
+                        url: 'http://192.168.31.49/album/add',
                         data: {
                             title: value
                         }, 
@@ -161,22 +161,34 @@
             toChangePass() {
                 this.changPass_dialogTableVisible=true;
             },
-            toDestroy() {
-                this.$confirm('此操作将永久删除该账户, 是否继续?', '提示', {
+            toLogout() {
+                // console.log(this.loginInfo)
+                this.$confirm('退出系统, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 })
                 .then(() => {
-                    this.$axios.post('http://139.9.205.50/user/logout')
-                    .then((res) => {
+                    this.$axios({
+                        method: 'post',
+                        url: 'http://192.168.31.49/user/logout',
+                        // data: {
+                        //     name: this.loginInfo.name,
+                        //     mail: this.loginInfo.mail,
+                        //     password: this.loginInfo.password,
+                        //     phone: this.loginInfo.phone
+                        // }, 
+                        header: {
+                            'Content-Type': 'application/json;charset=UTF-8'
+                        }
+                    }).then((res) => {
                         console.log(res)
                         var code = res.data.code
                         switch(code) {
                             case 200: 
                                 this.$notify({
-                                    title: '注销成功',
-                                    message: '该用户已永久删除',
+                                    title: '退出成功',
+                                    message: '',
                                     type: 'success'
                                 });
                                 this.$router.replace('/home/login')
@@ -186,8 +198,8 @@
                             case 403: 
                             case 404: 
                                 this.$notify.error({
-                                    title: '注销失败',
-                                    message: '找不到对应账户'
+                                    title: '退出失败',
+                                    message: ''
                                 });
                                 break;
                         }
@@ -197,7 +209,7 @@
                 }).catch(() => {
                     this.$message({
                         type: 'info',
-                        message: '已取消删除'
+                        message: '已取消退出'
                     });          
                 });
             }
