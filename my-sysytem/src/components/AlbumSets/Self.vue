@@ -20,8 +20,8 @@
                             <el-dropdown>
                                 <i class="el-icon-more" style="font-size:20px;"></i>
                                 <el-dropdown-menu slot="dropdown">
-                                    <el-dropdown-item>分享</el-dropdown-item>
-                                    <el-dropdown-item>共享</el-dropdown-item>
+                                    <el-dropdown-item @click.native="shareAlbum(item.id)">分享</el-dropdown-item>
+                                    <el-dropdown-item @click.native="partakeAlbum(item.id)">共享</el-dropdown-item>
                                     <el-dropdown-item @click.native="editAlbum(item.id)">编辑</el-dropdown-item>
                                     <el-dropdown-item style="color:red;" @click.native="deleteAlbum(item.id)">删除</el-dropdown-item>
                                 </el-dropdown-menu>
@@ -217,6 +217,41 @@
             // 处理关闭
             handleClose(done) {
                 done()
+            },
+            shareAlbum(albumID) {
+                // alert(albumID)
+                this.$axios.get('http://192.168.31.49/share/min/'+albumID)
+                .then((res) => {
+                    console.log("分享"+res)
+                    this.$alert(res.data.data, '分享相册', {
+                        confirmButtonText: '确定',
+                        callback: action => {
+                            this.$message({
+                            type: 'info',
+                            message: `action: ${ action }`
+                            });
+                        }
+                    });
+                }).catch((err) => {
+                    console.log(err)
+                })
+            },
+            partakeAlbum(albumID) {
+                this.$axios.get('http://192.168.31.49/share/max/'+albumID)
+                .then((res) => {
+                    console.log("分享"+res)
+                    this.$alert(res.data.data, '共享相册', {
+                        confirmButtonText: '确定',
+                        callback: action => {
+                            this.$message({
+                            type: 'info',
+                            message: `action: ${ action }`
+                            });
+                        }
+                    });
+                }).catch((err) => {
+                    console.log(err)
+                })
             },
             ///////////////////////////////////////////////////【mounted执行】
             // 获取相册列表

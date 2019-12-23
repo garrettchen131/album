@@ -7,12 +7,12 @@
                 <div class="photoListContainer"> 
                     <div class="demo-image__preview showPhotoList" v-for="photo in photoList" :key="photo" style="color:#fff;">
                         <div 
-                            style="float:left;padding:10px;margin-top:10px;margin-left:5px;cursor:pointer;"
-                            @click="showPreviewViewer"
+                            style="float:left;padding:10px;margin-top:10px;margin-left:10px;cursor:pointer;"
+                            @click="showPreviewViewer(photo-1)"
                             v-if="!canCheckDelete">
                             <el-image
                                 class="photo"
-                                :src="photo"
+                                :src="reqPhotoUrl(previewSetId, photo)"
                                 fit="contain">
                             </el-image>
                         </div>
@@ -26,7 +26,7 @@
                         width="500px"
                         height="500px"
                         :on-close="closePreviewViewer"
-                        :url-list="photoList">
+                        :url-list="reqHDPhotoUrl(previewSetId, photoList, this.previewPhotoId)">
                     </el-image-viewer>
                     <p class="noPreviewImgTip" v-if="!viewer">选择要预览的图片</p>
                 </el-main>
@@ -52,10 +52,10 @@
             v-model="checkedPhotos" 
             @change="handleCheckedPhotosChange" 
             v-if="canCheckDelete">
-            <el-checkbox v-for="phpto in photoList" :label="phpto" :key="phpto" >
+            <el-checkbox v-for="photo in photoList" :label="photo" :key="photo" >
                 <el-image
                     class="photo"
-                    :src="phpto"
+                    :src="reqPhotoUrl(previewSetId, photo)"
                     fit="contain"
                     >
                 </el-image>
@@ -107,18 +107,24 @@
         data(){
             return {
                 addPhotos_dialogTableVisible: false,
-                photoList: this.$route.params.photos,
+                photoList: this.$route.params.set.photoIdList,
                 checkAll: false,
                 checkedPhotos: [],
                 isIndeterminate: true,
                 canCheckDelete: false,
                 deletePhotos_dialogVisible: false,
-                viewer: false
+                viewer: false,
+                previewSetId: this.$route.params.set.id,
+                previewPhotoId: "",
+                hadPreview: false,
+                goBackAlbumId: this.$route.params.albumID,
+                goBackAlbumTitle: this.$route.params.albumTitle
             }
         },
         methods:{
             goBack() {
-                this.$router.go(-1)
+                // this.$router.go(-1)
+                this.$router.push({name: 'set', params: {id: this.goBackAlbumId, title: this.goBackAlbumTitle}})
                 // this.showViewer = true
             },
             addPhotos() {
@@ -159,8 +165,43 @@
                 this.viewer = false
                 // $('.el-image-viewer__wrapper')
             },
-            showPreviewViewer() {
+            showPreviewViewer(photoId) {
                 this.viewer = true
+                this.previewPhotoId = photoId
+            },
+            reqPhotoUrl(setId, photoId) {
+                return "http://192.168.31.49/photo/thumb/" + setId + "/" + photoId
+            },
+            reqHDPhotoUrl(setId, photoList, previewId) {
+                var HDList = []
+                var len = photoList.length
+                // alert(previewId)
+                if(this.hadPreview) {
+                    // 已经打开了一个预览窗口
+                    this.$emit(this.closePreviewViewer)
+                    this.hadPreview = false
+                }
+                if(previewId==len-1) {
+                    HDList.push("http://192.168.31.49/photo/view/" + setId + "/" + photoList[previewId])
+                    for(var i = 0; i < previewId; i++) {
+                        HDList.push("http://192.168.31.49/photo/view/" + setId + "/" + photoList[i])
+                    }
+                } else if(previewId==0) {
+                    for(var i = 0; i < len; i++) {
+                        HDList.push("http://192.168.31.49/photo/view/" + setId + "/" + photoList[i])
+                    }
+                } else {
+                    for(var i = previewId; i < len; i++) {
+                        HDList.push("http://192.168.31.49/photo/view/" + setId + "/" + photoList[i])
+                    }
+                    for(var j = 0; j <previewId; j++) {
+                        HDList.push("http://192.168.31.49/photo/view/" + setId + "/" + photoList[j])
+                    }
+                }
+                
+                
+                
+                return HDList
             }
         },
         components: {

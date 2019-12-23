@@ -26,7 +26,7 @@ Router.prototype.push = function push(location) {
 }
 
 
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
+// axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 // axios.defaults.baseURL = '/api'
 axios.defaults.withCredentials = true
 

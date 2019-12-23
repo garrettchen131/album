@@ -46,6 +46,11 @@ html,body {
     background-color: #f78ea0;
 }
 
+/* Self.vue */
+.el-message-box {
+  width: 1000px;
+}
+
 
 /* Set.vue */
 .el-card__body {

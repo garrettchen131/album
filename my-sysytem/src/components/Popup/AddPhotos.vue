@@ -1,23 +1,54 @@
 <template>
-  <div>
-    <el-form :model="addPhotosForm" ref="addPhotosForm" label-width="20px" class="demo-addPhotosForm">
-            <el-upload
-                class="upload-demo"
-                ref="uploadPhotos"
-                drag
-                action="https://www.mocky.io/v2/5185415ba171ea3a00704eed/posts/"
-                multiple
-                style="padding:20px;">
-                <i class="el-icon-upload"></i>
-                <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
-            </el-upload>
-        <el-form-item>
-            <el-button type="primary" @click="submitPhotos('addPhotosForm')">立即添加</el-button>
-            <el-button @click="resetPhotos()">重新选择</el-button>
-      </el-form-item>
-    </el-form>
-  </div>
+    <div>
+        
+        <el-form :model="addPhotosForm" ref="addPhotosForm" label-width="20px" class="demo-addPhotosForm">
+            <el-form-item>
+                <el-upload
+                    class="upload-demo"
+                    ref="uploadPhotos"
+                    accept="image/png,image/gif,image/jpg,image/jpeg"
+                    drag
+                    multiple
+                    action="url"
+                    :auto-upload="false"
+                    :before-upload="beforeUpload"
+                    :on-success="handleSuccess"
+                    :on-remove="handleRemove"
+                    :on-preview="handlePreview"
+                    :on-error="handleError"
+                    :http-request="postPhotos"
+                    style="padding:20px;">
+                    <i class="el-icon-upload"></i>
+                    <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                    <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
+                </el-upload>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="submitPhotos()">上传{{this.url}}</el-button>
+                <el-button @click="resetPhotos()">清空上传列表内容</el-button>
+            </el-form-item>
+        </el-form>
+
+<!-- :http-request="postPhotos" -->
+ <!-- action="http://192.168.31.49/photo/upload/14" -->
+
+        <!-- <form :action="url" enctype="multipart/form-data" method="post" id="myForm">
+            <table>
+                <tr>
+                    <td>上传图片</td>
+                    <td>
+                        <input class="fl" type="file" id="imgPath" name="photo" multiple="multiple"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="submit" value="submit">
+                    </td>
+                </tr>
+            </table>
+        </form> -->
+
+    </div>
 </template>
 
 <script>
@@ -26,30 +57,244 @@ export default {
     return {
         addPhotosForm: {
 
-        }
+        },
+        fileList: [],
+        formData: [],
+        // photoList: [],
+        url: 'http://192.168.31.49/photo/upload/' + this.parentSetId,
     }
   },
   methods: {
-    submitPhotos(formName) {
-      this.$refs[formName].validate((valid) => {
-          if (valid) {
-            // alert('submit!');
-            this.$message({
-              message: '恭喜你，相册创建成功',
-              type: 'success'
-            });
-          } else {
-            // console.log('error submit!!');
-            this.$message.error('相册创建失败，请重新创建');
-            return false;
-          }
-        });
-    },
-    resetPhotos() {
-      this.$refs.uploadPhotos.clearFiles();
-    }
-  }
+        submitPhotos() {
+            this.$refs.uploadPhotos.submit()
+
+
+            this.$axios.post('http://192.168.31.49/photo/upload/'+this.parentSetId, this.formData)
+            .then((res) => {
+                console.log(res)
+                var code = res.data.code
+                switch(code) {
+                    case 200: 
+                        this.$notify({
+                            title: 'upload成功',
+                            message: '',
+                            type: 'success'
+                        });
+                        // this.photoList = res.data.data.photoIdList
+                        // this.$emit('func', this.photoList)
+                        break;
+                    case 201: 
+                    case 401: 
+                    case 403: 
+                    case 404:  
+                        this.$notify.error({
+                            title: '失败',
+                            message: '请重试'
+                        });
+                        // this.newAlbumInfo = res.data
+                        break;
+                    case 500:
+                        this.$notify.error({
+                            title: '请先登录',
+                            message: '500'
+                        });
+                        break;
+                }
+            }).catch((err) => {
+                console.log(err)
+            })
+
+        },
+        postPhotos(item) {
+            this.formData = new FormData();
+            this.formData.append('photo', item.file)
+            // this.formData.append('file', item.file)
+            // let formData = new FormData();
+            // formData.append('name', item.file.name)
+            // formData.append('file', item.file)
+            // console.log('上传图片接口-参数', item.file)
+            // console.log('上传图片名称', item.file.name)
+            // console.log('FORMDATA:' + this.formData)
+
+            // this.$axios.post('http://192.168.31.49/photo/upload/'+this.parentSetId, formData)
+            // .then((res) => {
+            //     console.log(res)
+            //     var code = res.data.code
+            //     switch(code) {
+            //         case 200: 
+            //             this.$notify({
+            //                 title: 'upload成功',
+            //                 message: '',
+            //                 type: 'success'
+            //             });
+            //             break;
+            //         case 201: 
+            //         case 401: 
+            //         case 403: 
+            //         case 404:  
+            //             this.$notify.error({
+            //                 title: '失败',
+            //                 message: '请重试'
+            //             });
+            //             // this.newAlbumInfo = res.data
+            //             break;
+            //         case 500:
+            //             this.$notify.error({
+            //                 title: '请上传图片',
+            //                 message: '500'
+            //             });
+            //             break;
+            //     }
+            // }).catch((err) => {
+            //     console.log(err)
+            // })
+            
+        },
+        resetPhotos() {
+            this.$refs.uploadPhotos.clearFiles();
+        },
+        handleSuccess(response, file, fileList) {
+            alert("handleSuccess")
+        },
+        handleRemove(file, fileList) {
+            alert("handleRemove")
+            console.log(file)
+        },
+        handlePreview(file) {
+            alert("handlePreview:"+file)
+        },
+        handleError(err, file, fileList) {
+            alert("handleError:"+err)
+        },
+        beforeUpload(file) {
+            alert("beforeUpload")
+            console.log(file)
+        },
+        // uploadHeader() {
+        //     return {'Content-Type': 'multipart/form-data'}
+        // }
+        uploadUrl() {
+            return 'http://192.168.31.49/photo/upload/' + this.parentSetId
+        } 
+  },
+  props: ['parentSetId']
 }
+
+
+/*
+submitPhotos() {
+            this.$refs.uploadPhotos.submit()
+
+
+            this.$axios.post('http://192.168.31.49/photo/upload/'+this.parentSetId, this.formData)
+            .then((res) => {
+                console.log(res)
+                var code = res.data.code
+                switch(code) {
+                    case 200: 
+                        this.$notify({
+                            title: 'upload成功',
+                            message: '',
+                            type: 'success'
+                        });
+                        break;
+                    case 201: 
+                    case 401: 
+                    case 403: 
+                    case 404:  
+                        this.$notify.error({
+                            title: '失败',
+                            message: '请重试'
+                        });
+                        // this.newAlbumInfo = res.data
+                        break;
+                    case 500:
+                        this.$notify.error({
+                            title: '请上传图片',
+                            message: '500'
+                        });
+                        break;
+                }
+            }).catch((err) => {
+                console.log(err)
+            })
+
+        },
+        postPhotos(item) {
+            // this.formData = new FormData();
+            // this.formData.append('name', item.file.name)
+            // this.formData.append('file', item.file)
+            let formData = new FormData();
+            formData.append('name', item.file.name)
+            formData.append('file', item.file)
+            console.log('上传图片接口-参数', item.file)
+            console.log('上传图片名称', item.file.name)
+            console.log('FORMDATA:' + formData)
+
+            this.$axios.post('http://192.168.31.49/photo/upload/'+this.parentSetId, formData)
+            .then((res) => {
+                console.log(res)
+                var code = res.data.code
+                switch(code) {
+                    case 200: 
+                        this.$notify({
+                            title: 'upload成功',
+                            message: '',
+                            type: 'success'
+                        });
+                        break;
+                    case 201: 
+                    case 401: 
+                    case 403: 
+                    case 404:  
+                        this.$notify.error({
+                            title: '失败',
+                            message: '请重试'
+                        });
+                        // this.newAlbumInfo = res.data
+                        break;
+                    case 500:
+                        this.$notify.error({
+                            title: '请上传图片',
+                            message: '500'
+                        });
+                        break;
+                }
+            }).catch((err) => {
+                console.log(err)
+            })
+            
+        },
+        resetPhotos() {
+            this.$refs.uploadPhotos.clearFiles();
+        },
+        handleSuccess(response, file, fileList) {
+            alert("handleSuccess")
+        },
+        handleRemove(file, fileList) {
+            alert("handleRemove")
+            console.log(file)
+        },
+        handlePreview(file) {
+            alert("handlePreview:"+file)
+        },
+        handleError(err, file, fileList) {
+            alert("handleError:"+err)
+        },
+        beforeUpload(file) {
+            alert("beforeUpload")
+            console.log(file)
+        },
+        // uploadHeader() {
+        //     return {'Content-Type': 'multipart/form-data'}
+        // }
+        uploadUrl() {
+            return 'http://192.168.31.49/photo/upload/' + this.parentSetId
+        } 
+*/
+
+
+
 
 </script>
 
