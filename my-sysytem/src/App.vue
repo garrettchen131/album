@@ -48,7 +48,7 @@ html,body {
 
 /* Self.vue */
 .el-message-box {
-  width: 1000px;
+  width: 700px;
 }
 
 

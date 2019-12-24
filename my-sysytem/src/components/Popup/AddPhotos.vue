@@ -11,11 +11,6 @@
                     multiple
                     action="url"
                     :auto-upload="false"
-                    :before-upload="beforeUpload"
-                    :on-success="handleSuccess"
-                    :on-remove="handleRemove"
-                    :on-preview="handlePreview"
-                    :on-error="handleError"
                     :http-request="postPhotos"
                     style="padding:20px;">
                     <i class="el-icon-upload"></i>
@@ -24,11 +19,18 @@
                 </el-upload>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" @click="submitPhotos()">上传{{this.url}}</el-button>
+                <el-button type="primary" @click="submitPhotos()">上传</el-button>
                 <el-button @click="resetPhotos()">清空上传列表内容</el-button>
             </el-form-item>
         </el-form>
 
+<!-- 
+
+:before-upload="beforeUpload"
+                    :on-success="handleSuccess"
+                    :on-remove="handleRemove"
+                    :on-preview="handlePreview"
+                    :on-error="handleError" -->
 <!-- :http-request="postPhotos" -->
  <!-- action="http://192.168.31.49/photo/upload/14" -->
 
@@ -59,7 +61,7 @@ export default {
 
         },
         fileList: [],
-        formData: [],
+        // formData: [],
         // photoList: [],
         url: 'http://192.168.31.49/photo/upload/' + this.parentSetId,
     }
@@ -69,19 +71,70 @@ export default {
             this.$refs.uploadPhotos.submit()
 
 
-            this.$axios.post('http://192.168.31.49/photo/upload/'+this.parentSetId, this.formData)
+            // this.$axios.post('http://192.168.31.49/photo/upload/'+this.parentSetId, this.formData)
+            // .then((res) => {
+            //     console.log(res)
+            //     var code = res.data.code
+            //     switch(code) {
+            //         case 200: 
+            //             this.$notify({
+            //                 title: '上传成功',
+            //                 message: '',
+            //                 type: 'success'
+            //             });
+            //             this.resetPhotos()
+            //             // this.photoList = res.data.data.photoIdList
+            //             this.$emit('func')
+            //             this.$router.push('set')
+            //             break;
+            //         case 201: 
+            //         case 401: 
+            //         case 403: 
+            //         case 404:  
+            //             this.$notify.error({
+            //                 title: '失败',
+            //                 message: '请重试'
+            //             });
+            //             // this.newAlbumInfo = res.data
+            //             break;
+            //         case 500:
+            //             this.$notify.error({
+            //                 title: '请先登录',
+            //                 message: '500'
+            //             });
+            //             break;
+            //     }
+            // }).catch((err) => {
+            //     console.log(err)
+            // })
+
+        },
+        postPhotos(item) {
+            // this.formData = new FormData();
+            // this.formData.append('photo', item.file)
+            // this.formData.append('file', item.file)
+            let formData = new FormData();
+            // formData.append('name', item.file.name)
+            formData.append('photo', item.file)
+            // console.log('上传图片接口-参数', item.file)
+            // console.log('上传图片名称', item.file.name)
+            // console.log('FORMDATA:' + this.formData)
+
+            this.$axios.post('http://192.168.31.49/photo/upload/'+this.parentSetId, formData)
             .then((res) => {
                 console.log(res)
                 var code = res.data.code
                 switch(code) {
                     case 200: 
                         this.$notify({
-                            title: 'upload成功',
+                            title: '上传成功',
                             message: '',
                             type: 'success'
                         });
+                        this.resetPhotos()
                         // this.photoList = res.data.data.photoIdList
-                        // this.$emit('func', this.photoList)
+                        this.$emit('func')
+                        this.$router.push('set')
                         break;
                     case 201: 
                     case 401: 
@@ -103,51 +156,6 @@ export default {
             }).catch((err) => {
                 console.log(err)
             })
-
-        },
-        postPhotos(item) {
-            this.formData = new FormData();
-            this.formData.append('photo', item.file)
-            // this.formData.append('file', item.file)
-            // let formData = new FormData();
-            // formData.append('name', item.file.name)
-            // formData.append('file', item.file)
-            // console.log('上传图片接口-参数', item.file)
-            // console.log('上传图片名称', item.file.name)
-            // console.log('FORMDATA:' + this.formData)
-
-            // this.$axios.post('http://192.168.31.49/photo/upload/'+this.parentSetId, formData)
-            // .then((res) => {
-            //     console.log(res)
-            //     var code = res.data.code
-            //     switch(code) {
-            //         case 200: 
-            //             this.$notify({
-            //                 title: 'upload成功',
-            //                 message: '',
-            //                 type: 'success'
-            //             });
-            //             break;
-            //         case 201: 
-            //         case 401: 
-            //         case 403: 
-            //         case 404:  
-            //             this.$notify.error({
-            //                 title: '失败',
-            //                 message: '请重试'
-            //             });
-            //             // this.newAlbumInfo = res.data
-            //             break;
-            //         case 500:
-            //             this.$notify.error({
-            //                 title: '请上传图片',
-            //                 message: '500'
-            //             });
-            //             break;
-            //     }
-            // }).catch((err) => {
-            //     console.log(err)
-            // })
             
         },
         resetPhotos() {

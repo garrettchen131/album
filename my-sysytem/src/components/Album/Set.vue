@@ -77,8 +77,8 @@
       position="absolute"
       top="50px"
     >
-      <addPhotos :parentSetId="uploadSetId"></addPhotos>
-      <!-- <addPhotos :parentSetId="uploadSetId" @func="getUploadPhotoList"></addPhotos> -->
+      <!-- <addPhotos :parentSetId="uploadSetId"></addPhotos> -->
+      <addPhotos :parentSetId="uploadSetId" @func="getUploadPhotoList"></addPhotos>
     </el-dialog>
 
     <el-drawer :visible.sync="drawer" :with-header="false">
@@ -270,7 +270,8 @@ export default {
                   type: "success"
                 });
                 // this.editDesc = false
-                this.toCancelDesc();
+                // this.toCancelDesc();
+                this.editDesc = true;
                 this.getAlbumSets();
                 break;
               case 201:
@@ -374,9 +375,15 @@ export default {
             return 0
         }
     },
-    // getUploadPhotoList(photoList) {
-    //     this.photoList = photoList
-    // },
+    getUploadPhotoList() {
+        // this.photoList = photoList
+        // alert("hhhh")
+        // this.uploadPhotos_dialogTableVisible = true
+        this.getAlbumSets()
+    },
+    closeDialog() {
+      alert('close')
+    },
     ///////////////////////////////////////////////////【mounted执行】
     // 获取相册集列表
     getAlbumSets() {
