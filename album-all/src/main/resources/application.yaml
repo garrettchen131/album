@@ -4,7 +4,7 @@
 spring:
   datasource:
     url: jdbc:mysql://cdb-phybktho.cd.tencentcdb.com:10054/db_album?characterEncoding=utf-8
-    password: ITElites420130
+    password: 
     username: root
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
